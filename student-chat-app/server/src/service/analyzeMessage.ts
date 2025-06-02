@@ -20,7 +20,7 @@ const dangerousKeywords = [
 ];
 
 // Perspective API KEY שלך
-const PERSPECTIVE_API_KEY = 'AIzaSyC6J_S6lU9PO0rx3yYfCEUjqRRBNnaRycQ';
+const PERSPECTIVE_API_KEY = '122';
 const PERSPECTIVE_URL = `https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze?key=${PERSPECTIVE_API_KEY}`;
 
 type PerspectiveResponse = {
