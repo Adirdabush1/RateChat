@@ -1,6 +1,7 @@
 // pages/RegisterParent.tsx
 import { useState } from 'react';
 import { registerParent } from '../services/api';
+import { useNavigate } from 'react-router-dom';
 
 export default function RegisterParent() {
   const [formData, setFormData] = useState({ email: '', password: '', name: '', childEmail: '' });
@@ -8,11 +9,13 @@ export default function RegisterParent() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-
+  const navigate = useNavigate();
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     await registerParent(formData);
     alert('ההרשמה הצליחה');
+          navigate('/parent-dashboard'); 
+
   };
 
   return (
