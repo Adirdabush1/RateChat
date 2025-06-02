@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { io, Socket } from 'socket.io-client';
+import '../pages/styles/chatwindow.css';
 
 type ChatMessage = {
   message: string;
@@ -58,8 +59,6 @@ export default function ChatWindow() {
     });
 
     socketRef.current.on('receive_message', (data: ChatMessage) => {
-     
-
       setChat(prev => {
         const updatedChat = [...prev, data];
         if (groupName) {
@@ -136,44 +135,40 @@ export default function ChatWindow() {
   };
 
   return (
-    <div style={{ padding: 20, fontFamily: 'sans-serif', direction: 'rtl' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h2>🟢 קבוצת צ'אט - {groupName}</h2>
-        <div style={{ display: 'flex', gap: 10 }}>
-          <button onClick={clearChat} style={{ padding: '5px 10px', background: '#fdd', border: '1px solid #faa', color: '#a00' }}>נקה צ'אט</button>
-          <button onClick={handleLogout} style={{ padding: '5px 10px', background: '#eee', border: '1px solid #ccc' }}>התנתקות</button>
+    <div className="chat-window">
+      <aside className="sidebar">
+        <h2 className="sidebar-title">🟢 קבוצת צ'אט</h2>
+        <p className="group-name">{groupName}</p>
+        <div className="sidebar-actions">
+          <button className="btn btn-clear" onClick={clearChat}>נקה צ'אט</button>
+          <button className="btn btn-logout" onClick={handleLogout}>התנתקות</button>
         </div>
-      </div>
+      </aside>
 
-      <div ref={chatBoxRef} style={{
-        border: '1px solid #ccc',
-        padding: 10,
-        height: 300,
-        overflowY: 'auto',
-        marginBottom: 10,
-        background: '#f9f9f9',
-        borderRadius: 4,
-      }}>
-        {chat.map((chatMessage, index) => (
-          <div key={index} style={{ marginBottom: 6 }}>
-            <b>{chatMessage.sender}:</b> {chatMessage.message}
-          </div>
-        ))}
-      </div>
+      <main className="chat-main">
+        <div ref={chatBoxRef} className="chat-box">
+          {chat.map((chatMessage, index) => (
+            <div
+              key={index}
+              className={`chat-message ${chatMessage.sender === username ? 'own-message' : ''}`}
+            >
+              <b>{chatMessage.sender}:</b> {chatMessage.message}
+            </div>
+          ))}
+        </div>
 
-      <div style={{ display: 'flex', gap: 10 }}>
-        <input
-          type="text"
-          value={message}
-          onChange={e => setMessage(e.target.value)}
-          placeholder="כתוב הודעה..."
-          style={{ flex: 1, padding: 5 }}
-          onKeyDown={e => e.key === 'Enter' && sendMessage()}
-        />
-        <button onClick={sendMessage} style={{ padding: '5px 15px' }}>
-          שלח
-        </button>
-      </div>
+        <div className="chat-input-area">
+          <input
+            type="text"
+            value={message}
+            onChange={e => setMessage(e.target.value)}
+            placeholder="כתוב הודעה..."
+            onKeyDown={e => e.key === 'Enter' && sendMessage()}
+            className="chat-input"
+          />
+          <button onClick={sendMessage} className="btn btn-send">שלח</button>
+        </div>
+      </main>
     </div>
   );
 }

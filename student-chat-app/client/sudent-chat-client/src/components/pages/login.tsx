@@ -1,32 +1,30 @@
 import { Link } from 'react-router-dom';
 import LoginForm from '../Auth/LoginForm';
+import '../pages/styles/Login.css';
 
 export default function LoginPage() {
   return (
-    <div style={{ maxWidth: 400, margin: 'auto', marginTop: 50, textAlign: 'center' }}>
-      <h2>התחברות</h2>
-      <LoginForm />
-
-      <div style={{ marginTop: 20 }}>
-        <Link to="/login-parent" style={{ color: 'green', textDecoration: 'underline' }}>
-          כניסת הורה
-        </Link>
+    <div className="login-page">
+      <div className="login-background">
+        <div className="shape"></div>
+        <div className="shape"></div>
       </div>
 
-      <div style={{ marginTop: 10 }}>
-        <Link to="/register">
-          <button style={{
-            marginTop: 10,
-            padding: '10px 20px',
-            backgroundColor: '#007bff',
-            color: 'white',
-            border: 'none',
-            borderRadius: 5,
-            cursor: 'pointer'
-          }}>
-            להרשמה
-          </button>
-        </Link>
+      <div className="login-form-container">
+        <h2>התחברות</h2>
+        <LoginForm />
+
+        <div className="extra-links">
+          <div>
+            <Link to="/login-parent">כניסת הורה</Link>
+          </div>
+
+          <div>
+            <Link to="/register">
+              <button className="register-button">להרשמה</button>
+            </Link>
+          </div>
+        </div>
       </div>
     </div>
   );
