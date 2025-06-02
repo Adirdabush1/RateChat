@@ -19,8 +19,8 @@ const dangerousKeywords = [
   'אני חותך',
 ];
 
-// Perspective API – תצטרך לשים את המפתח שלך כאן
-const PERSPECTIVE_API_KEY = 'your_api_key';
+// Perspective API KEY שלך
+const PERSPECTIVE_API_KEY = 'AIzaSyC6J_S6lU9PO0rx3yYfCEUjqRRBNnaRycQ';
 const PERSPECTIVE_URL = `https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze?key=${PERSPECTIVE_API_KEY}`;
 
 type PerspectiveResponse = {
@@ -44,13 +44,13 @@ export async function analyzeMessage(message: string): Promise<AnalysisResult> {
   try {
     const response = await axios.post<PerspectiveResponse>(PERSPECTIVE_URL, {
       comment: { text: message },
-      languages: ['he', 'en'],
+      language: 'he', // שים רק שפה אחת
       requestedAttributes: { TOXICITY: {} },
     });
 
     toxicScore = response.data.attributeScores.TOXICITY.summaryScore.value;
   } catch (error: any) {
-    console.error('Perspective API failed:', error.message);
+    console.error('Perspective API failed:', error.response?.data || error.message);
   }
 
   // בדיקת רגש בסיסית (פשוטה בינתיים)
