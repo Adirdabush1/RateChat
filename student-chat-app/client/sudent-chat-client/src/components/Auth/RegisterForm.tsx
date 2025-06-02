@@ -1,18 +1,23 @@
 // src/components/Auth/RegisterForm.tsx
 import { useState } from 'react';
 import { registerUser } from '../services/authService';
+import { useNavigate } from 'react-router-dom';
+
+
 
 export default function RegisterForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
+  const navigate = useNavigate(); 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       const result = await registerUser(email, password);
       setMessage('נרשמת בהצלחה!');
-      console.log(result); // אפשר להעביר לדף התחברות כאן
+      console.log(result); 
+      navigate('/chat'); // לאחר הרשמה של תלמיד
     } catch (error: any) {
       setMessage(error.response?.data?.message || 'שגיאה בעת הרשמה');
     }

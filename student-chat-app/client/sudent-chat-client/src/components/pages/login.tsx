@@ -12,6 +12,22 @@ export default function LoginPage() {
           כניסת הורה
         </Link>
       </div>
+
+      <div style={{ marginTop: 10 }}>
+        <Link to="/register">
+          <button style={{
+            marginTop: 10,
+            padding: '10px 20px',
+            backgroundColor: '#007bff',
+            color: 'white',
+            border: 'none',
+            borderRadius: 5,
+            cursor: 'pointer'
+          }}>
+            להרשמה
+          </button>
+        </Link>
+      </div>
     </div>
   );
 }
