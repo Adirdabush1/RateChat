@@ -8,7 +8,7 @@ export const connectSocket = (token: string, CHAT_ID: string) => {
   socket = io('http://localhost:3000', {
     auth: {
       token,
-    CHAT_ID: CHAT_ID,  // חובה לוודא שהמשתנה הזה מוגדר
+    CHAT_ID,  // חובה לוודא שהמשתנה הזה מוגדר
     },
   });
 

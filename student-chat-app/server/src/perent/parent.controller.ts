@@ -1,25 +1,15 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
+
+import { ParentService } from './perent.service';  
 
 @Controller('parent')
 export class ParentController {
-  @Get('student-info')
-  getStudentInfo() {
-    // דוגמה סטטית עם ניקוד והודעות חריגות
-    return {
-      name: 'דוד',
-      score: 85,
-      flaggedMessages: [
-        {
-          content: 'אני לא מרגיש טוב היום',
-          sentiment: 'שלילי',
-          createdAt: new Date().toISOString(),
-        },
-        {
-          content: 'הוא אמר משהו פוגעני למורה',
-          sentiment: 'פוגעני',
-          createdAt: new Date().toISOString(),
-        },
-      ],
-    };
-  }
+  constructor(private readonly parentService: ParentService) {}
+
+  // parent.controller.ts
+@Get('student-info')
+async getStudentInfo(@Query('parentEmail') parentEmail: string) {
+  return this.parentService.getStudentInfo(parentEmail); 
+}
+
 }

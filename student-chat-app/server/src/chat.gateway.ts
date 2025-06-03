@@ -7,21 +7,30 @@ import {
   OnGatewayConnection,
   OnGatewayDisconnect,
 } from '@nestjs/websockets';
+
 import { OnModuleInit, Logger } from '@nestjs/common';
+
 import { Server, Socket } from 'socket.io';
 import { JwtService } from '@nestjs/jwt';
 import axios from 'axios';
+import { analyzeMessageHebrew, AIAnalysis } from './service/analyzeMessage';
 
-import { analyzeMessage } from './service/analyzeMessage';
 import { MessagesService } from './messages/messages.service';
 import { UsersService } from './users/users.service';
 
-@WebSocketGateway({ cors: { origin: '*' } })
+@WebSocketGateway({
+  cors: {
+    origin: 'http://localhost:5173',
+    methods: ['GET', 'POST'],
+  },
+})
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, OnModuleInit {
   @WebSocketServer()
   server: Server;
 
   private logger = new Logger('ChatGateway');
+
+  private parentSockets = new Map<string, Socket>();
 
   constructor(
     private readonly messagesService: MessagesService,
@@ -57,8 +66,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         sender: 'מערכת',
         message: `${payload.email} הצטרף לצ'אט ${CHAT_ID}`,
       });
-
-    } catch (err) {
+    } catch (err: any) {
       this.logger.error('Invalid token', err.message);
       client.disconnect();
     }
@@ -69,11 +77,25 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     const CHAT_ID = client.data.CHAT_ID || 'unknown chat';
     this.logger.log(`Client disconnected: ${email} from chat ${CHAT_ID}`);
 
+    if (this.parentSockets.has(email)) {
+      this.parentSockets.delete(email);
+      this.logger.log(`Removed parent socket for ${email}`);
+    }
+
     this.server.to(CHAT_ID).emit('receive_message', {
       sender: 'מערכת',
       message: `${email} התנתק מהצ'אט`,
       CHAT_ID,
     });
+  }
+
+  @SubscribeMessage('registerParent')
+  handleRegisterParent(
+    @MessageBody() parentEmail: string,
+    @ConnectedSocket() client: Socket,
+  ) {
+    this.parentSockets.set(parentEmail, client);
+    this.logger.log(`Parent registered: ${parentEmail} with socket ${client.id}`);
   }
 
   @SubscribeMessage('send_message')
@@ -90,26 +112,35 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     }
 
     try {
-      const analysis = await analyzeMessage(data.message);
+      const analysis: AIAnalysis = await analyzeMessageHebrew(data.message);
 
-      // אפשרות ב - שמירה במסד
+      if (analysis.toxic) {
+        this.logger.warn('הודעה טוקסית:', analysis.reason);
+        if (analysis.alertParent) {
+          // כאן אפשר לממש שליחת התראה להורה
+        }
+      }
+
+      const score = typeof analysis.score === 'number' ? analysis.score : 0;
+      const scoreChange = typeof analysis.scoreChange === 'number' ? analysis.scoreChange : 0;
+
       const saved = await this.messagesService.saveMessage(
         user.email,
         data.message,
         CHAT_ID,
-        analysis.score
+        score,
       );
 
       this.server.to(CHAT_ID).emit('receive_message', {
         sender: saved.sender,
         message: saved.message,
-        score: analysis.score,
+        score,
         CHAT_ID,
       });
 
-      // אפשרות א - שליחת התראה חיצונית
       if (analysis.alertParent) {
         this.logger.warn(`Alert for parent! Reason: ${analysis.reason}`);
+
         try {
           await axios.post('https://your-api-url.com/alert', {
             studentEmail: user.email,
@@ -119,14 +150,27 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
             timestamp: new Date().toISOString(),
           });
           this.logger.log(`Alert sent to parent for ${user.email}`);
-        } catch (error) {
+        } catch (error: any) {
           this.logger.error('Failed to send alert to parent:', error.message);
+        }
+
+        const parentSocket = this.parentSockets.get(user.email);
+        if (parentSocket) {
+          const currentScore = await this.usersService.updateUserScore(user.email, scoreChange);
+          const flaggedMessages = await this.messagesService.getFlaggedMessages(user.email);
+
+          parentSocket.emit('studentDataUpdate', {
+            name: user.email,
+            score: currentScore,
+            flaggedMessages,
+          });
+
+          this.logger.log(`Real-time update sent to parent ${user.email}`);
         }
       }
 
-      await this.usersService.updateUserScore(user.email, analysis.scoreChange);
-
-    } catch (err) {
+      await this.usersService.updateUserScore(user.email, scoreChange);
+    } catch (err: any) {
       this.logger.error('Error in onSendMessage:', err);
     }
   }

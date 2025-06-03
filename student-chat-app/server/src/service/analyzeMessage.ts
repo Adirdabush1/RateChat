@@ -1,80 +1,95 @@
 import axios from 'axios';
+import * as dotenv from 'dotenv';
 
-type AnalysisResult = {
-  score: number;
+dotenv.config();
+
+const PERSPECTIVE_API_KEY = process.env.PERSPECTIVE_API_KEY;
+
+export type AIAnalysis = {
   toxic: boolean;
-  sentiment: 'positive' | 'neutral' | 'negative';
+  reason: string;
   alertParent: boolean;
-  scoreChange: number;
-  reason?: string;
+  score?: number;
+  scoreChange?: number;
+  sentiment: 'חיובי' | 'נייטרלי' | 'שלילי';
 };
 
-const dangerousKeywords = [
-  'בא לי למות',
-  'שונא את עצמי',
-  'אני בודד',
-  'אתה מת',
-  'אף אחד לא אוהב אותי',
-  'אני חותך',
-];
-
-const PERSPECTIVE_API_KEY = '122';
-const PERSPECTIVE_URL = `https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze?key=${PERSPECTIVE_API_KEY}`;
-
-type PerspectiveResponse = {
-  attributeScores: {
-    TOXICITY: {
-      summaryScore: {
-        value: number;
-      };
+// טיפוס לתגובה של Perspective API (רלוונטי לחלק attributeScores)
+type AttributeScores = {
+  [key: string]: {
+    summaryScore: {
+      value: number;
     };
   };
 };
 
-export async function analyzeMessage(message: string): Promise<AnalysisResult> {
-  const lower = message.toLowerCase();
+type PerspectiveResponse = {
+  attributeScores: AttributeScores;
+};
 
-  const foundDangerous = dangerousKeywords.find(word => lower.includes(word));
+function getToxicityScore(attributes: AttributeScores | undefined): number {
+  if (!attributes) return 0;
+  return attributes.TOXICITY?.summaryScore?.value ?? 0;
+}
 
-  let toxicScore = 0;
+function determineSentiment(score: number): 'חיובי' | 'נייטרלי' | 'שלילי' {
+  if (score > 0.6) return 'שלילי';
+  if (score < 0.4) return 'חיובי';
+  return 'נייטרלי';
+}
+
+export async function analyzeMessageHebrew(message: string): Promise<AIAnalysis> {
   try {
-    const response = await axios.post<PerspectiveResponse>(PERSPECTIVE_URL, {
+    const url = `https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze?key=${PERSPECTIVE_API_KEY}`;
+
+
+    const data = {
       comment: { text: message },
-      language: 'he', 
-      requestedAttributes: { TOXICITY: {} },
-    });
+      languages: ['en'],
+      requestedAttributes: {
+        TOXICITY: {},
+        INSULT: {},
+        PROFANITY: {},
+        SEXUALLY_EXPLICIT: {},
+        THREAT: {},
+      },
+      doNotStore: true,
+    };
 
-    toxicScore = response.data.attributeScores.TOXICITY.summaryScore.value;
+    const res = await axios.post<PerspectiveResponse>(url, data);
+
+    const attributes = res.data.attributeScores;
+    const toxicityScore = getToxicityScore(attributes);
+    const alertThreshold = 0.7;
+
+    const toxic = toxicityScore >= alertThreshold;
+    let reason = '';
+
+    if (toxic) {
+      const reasons: string[] = [];
+      for (const attr of ['TOXICITY', 'INSULT', 'PROFANITY', 'SEXUALLY_EXPLICIT', 'THREAT']) {
+        if (attributes[attr]?.summaryScore?.value >= alertThreshold) {
+          reasons.push(attr.toLowerCase());
+        }
+      }
+      reason = 'הודעה מכילה: ' + reasons.join(', ');
+    }
+
+    return {
+      toxic,
+      reason,
+      alertParent: toxic,
+      score: toxicityScore,
+      scoreChange: toxic ? -10 : 1,
+      sentiment: determineSentiment(toxicityScore),
+    };
   } catch (error: any) {
-    console.error('Perspective API failed:', error.response?.data || error.message);
+    console.error('Perspective API Error:', error.message || error);
+    return {
+      toxic: false,
+      reason: '',
+      alertParent: false,
+      sentiment: 'נייטרלי',
+    };
   }
-
-  let sentiment: 'positive' | 'neutral' | 'negative' = 'neutral';
-  if (lower.includes('תודה') || lower.includes('כל הכבוד') || lower.includes('אהבתי')) {
-    sentiment = 'positive';
-  } else if (lower.includes('שונא') || lower.includes('דביל') || lower.includes('מטומטם')) {
-    sentiment = 'negative';
-  }
-
-  const toxic = toxicScore > 0.75;
-  const alertParent = toxic || !!foundDangerous;
-  let scoreChange = 0;
-
-  if (alertParent) {
-    scoreChange = -2;
-  } else if (sentiment === 'positive') {
-    scoreChange = +1;
-  }
-
-  
-  const score = Math.round(toxicScore * 100) + scoreChange;
-
-  return {
-    toxic,
-    score,
-    sentiment,
-    alertParent,
-    scoreChange,
-    reason: foundDangerous || (toxic ? 'טוקסיות גבוהה' : undefined),
-  };
 }
