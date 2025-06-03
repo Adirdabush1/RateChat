@@ -65,6 +65,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       this.server.to(CHAT_ID).emit('receive_message', {
         sender: 'מערכת',
         message: `${payload.email} הצטרף לצ'אט ${CHAT_ID}`,
+        
       });
     } catch (err: any) {
       this.logger.error('Invalid token', err.message);
