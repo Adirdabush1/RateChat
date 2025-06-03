@@ -63,14 +63,19 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ token, CHAT_ID }) => {
     });
 
     socketRef.current.on('receive_message', (data: ChatMessage) => {
-      setChat(prev => {
-        const updatedChat = [...prev, data];
-        if (CHAT_ID) {
-          localStorage.setItem(`chatMessages_${CHAT_ID}`, JSON.stringify(updatedChat));
-        }
-        return updatedChat;
-      });
-    });
+  setChat(prev => {
+    const updatedChat = [...prev, data];
+    if (CHAT_ID) {
+      localStorage.setItem(`chatMessages_${CHAT_ID}`, JSON.stringify(updatedChat));
+    }
+    return updatedChat;
+  });
+
+  if (data.alertParent) {
+    alert("⚠️ נשלחה הודעה להורה בעקבות תוכן פוגעני!");
+  }
+});
+
 
     socketRef.current.on('chat_history', (messages: ChatMessage[]) => {
       setChat(messages);
