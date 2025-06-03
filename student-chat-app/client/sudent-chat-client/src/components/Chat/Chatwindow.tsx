@@ -137,13 +137,27 @@ export default function ChatWindow() {
   return (
     <div className="chat-window">
       <aside className="sidebar">
-        <h2 className="sidebar-title">🟢 קבוצת צ'אט</h2>
-        <p className="group-name">{groupName}</p>
-        <div className="sidebar-actions">
-          <button className="btn btn-clear" onClick={clearChat}>נקה צ'אט</button>
-          <button className="btn btn-logout" onClick={handleLogout}>התנתקות</button>
-        </div>
-      </aside>
+  <h2 className="sidebar-title">🟢 קבוצת צ'אט</h2>
+
+  <p className="group-name">נוכחי: {groupName}</p>
+
+  <div className="groups-list">
+    {JSON.parse(localStorage.getItem('chatGroups') || '[]').map((group: string, idx: number) => (
+      <button
+        key={idx}
+        className={`group-link ${group === groupName ? 'active' : ''}`}
+        onClick={() => navigate(`/chat/${group}`)}
+      >
+        {group}
+      </button>
+    ))}
+  </div>
+
+  <div className="sidebar-actions">
+    <button className="btn btn-clear" onClick={clearChat}>נקה צ'אט</button>
+    <button className="btn btn-logout" onClick={handleLogout}>התנתקות</button>
+  </div>
+</aside>
 
       <main className="chat-main">
         <div ref={chatBoxRef} className="chat-box">

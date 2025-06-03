@@ -9,7 +9,6 @@ type AnalysisResult = {
   reason?: string;
 };
 
-// מילים חריגות (תוכל להרחיב בהמשך)
 const dangerousKeywords = [
   'בא לי למות',
   'שונא את עצמי',
@@ -19,7 +18,6 @@ const dangerousKeywords = [
   'אני חותך',
 ];
 
-// Perspective API KEY שלך
 const PERSPECTIVE_API_KEY = '122';
 const PERSPECTIVE_URL = `https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze?key=${PERSPECTIVE_API_KEY}`;
 
@@ -36,15 +34,13 @@ type PerspectiveResponse = {
 export async function analyzeMessage(message: string): Promise<AnalysisResult> {
   const lower = message.toLowerCase();
 
-  // בדיקת מילים מסוכנות
   const foundDangerous = dangerousKeywords.find(word => lower.includes(word));
 
-  // בדיקת טוקסיות
   let toxicScore = 0;
   try {
     const response = await axios.post<PerspectiveResponse>(PERSPECTIVE_URL, {
       comment: { text: message },
-      language: 'he', // שים רק שפה אחת
+      language: 'he', 
       requestedAttributes: { TOXICITY: {} },
     });
 
@@ -53,7 +49,6 @@ export async function analyzeMessage(message: string): Promise<AnalysisResult> {
     console.error('Perspective API failed:', error.response?.data || error.message);
   }
 
-  // בדיקת רגש בסיסית (פשוטה בינתיים)
   let sentiment: 'positive' | 'neutral' | 'negative' = 'neutral';
   if (lower.includes('תודה') || lower.includes('כל הכבוד') || lower.includes('אהבתי')) {
     sentiment = 'positive';
@@ -61,7 +56,6 @@ export async function analyzeMessage(message: string): Promise<AnalysisResult> {
     sentiment = 'negative';
   }
 
-  // קבלת החלטות
   const toxic = toxicScore > 0.75;
   const alertParent = toxic || !!foundDangerous;
   let scoreChange = 0;
@@ -72,7 +66,7 @@ export async function analyzeMessage(message: string): Promise<AnalysisResult> {
     scoreChange = +1;
   }
 
-  // הגדרת score כאן, לדוגמה: ניקוד כללי מחושב לפי toxicScore * 100 פחות שינויים
+  
   const score = Math.round(toxicScore * 100) + scoreChange;
 
   return {
