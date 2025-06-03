@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
+import './styles/Login.css'; // CSS כמו של login-page
 
 interface ParentLoginResponse {
   token: string;
@@ -39,9 +41,16 @@ const LoginParent: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
-      <form onSubmit={handleSubmit} className="bg-white p-6 rounded shadow-md w-full max-w-md space-y-4">
-        <h2 className="text-2xl font-bold text-center">כניסת הורה</h2>
+    <div className="login-page">
+      {/* רקעים דקורטיביים */}
+      <div className="login-background">
+        <div className="shape"></div>
+        <div className="shape"></div>
+      </div>
+
+      {/* טופס שקוף */}
+      <form onSubmit={handleSubmit} className="login-form-container">
+        <h2>כניסת הורה</h2>
 
         <input
           type="email"
@@ -49,7 +58,6 @@ const LoginParent: React.FC = () => {
           placeholder="אימייל"
           value={formData.email}
           onChange={handleChange}
-          className="w-full p-2 border rounded"
           required
         />
 
@@ -59,13 +67,15 @@ const LoginParent: React.FC = () => {
           placeholder="סיסמה"
           value={formData.password}
           onChange={handleChange}
-          className="w-full p-2 border rounded"
           required
         />
 
-        <button type="submit" className="w-full bg-green-600 text-white p-2 rounded hover:bg-green-700">
-          התחבר כהורה
-        </button>
+        <button type="submit">התחבר כהורה</button>
+
+        {/* קישור להרשמה */}
+        <div className="extra-links">
+          <Link to="/register-parent">אין לך חשבון? לחץ כאן להרשמה</Link>
+        </div>
       </form>
     </div>
   );
