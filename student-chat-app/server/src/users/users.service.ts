@@ -34,4 +34,15 @@ async createUser(email: string, hashedPassword: string, role: string): Promise<U
   async findById(id: string): Promise<User | null> {
   return this.userModel.findById(id);
 }
+async findChildrenByParentEmail(parentEmail: string): Promise<User[]> {
+  return this.userModel.find({ role: 'student', parentEmail }).exec();
+}
+async updateScore(email: string, newScore: number): Promise<User | null> {
+  return this.userModel.findOneAndUpdate(
+    { email },
+    { score: newScore },
+    { new: true }
+  ).exec();
+}
+
 }

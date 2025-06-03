@@ -28,4 +28,13 @@ export class MessagesService {
   async getMessagesByChat(CHAT_ID: string): Promise<Message[]> {
     return this.messageModel.find({ CHAT_ID }).exec();
   }
+
+  async getFlaggedMessages(CHAT_ID: string): Promise<Message[]> {
+  return this.messageModel.find({ CHAT_ID, score: { $lt: 50 } }).exec();
+}
+async getFlaggedMessagesByStudentEmail(studentEmail: string): Promise<Message[]> {
+  return this.messageModel.find({ sender: studentEmail, flagged: true }).exec();
+}
+
+
 }

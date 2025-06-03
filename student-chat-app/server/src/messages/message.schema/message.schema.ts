@@ -7,7 +7,7 @@ export type MessageDocument = Message & Document;
 export class Message {
   @Prop({ required: true })
   sender: string;
-
+text: string;
   @Prop({ required: true })
   message: string;
 

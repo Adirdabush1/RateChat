@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+// src/components/Chat/Chatwindow.tsx
+import React, { useEffect, useRef, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { io, Socket } from 'socket.io-client';
 import '../pages/styles/chatwindow.css';
 
@@ -10,18 +11,21 @@ type ChatMessage = {
   alertParent?: boolean;
 };
 
-export default function ChatWindow() {
+type ChatComponentProps = {
+  token: string;
+  CHAT_ID: string;
+};
+
+const ChatComponent: React.FC<ChatComponentProps> = ({ token, CHAT_ID }) => {
   const [message, setMessage] = useState('');
   const [username, setUsername] = useState('');
   const [chat, setChat] = useState<ChatMessage[]>([]);
   const chatBoxRef = useRef<HTMLDivElement>(null);
   const socketRef = useRef<Socket | null>(null);
   const navigate = useNavigate();
-  const { groupName } = useParams();
   const previousGroupRef = useRef<string | null>(null);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
     const userData = localStorage.getItem('user');
 
     if (!token || !userData) {
@@ -44,14 +48,14 @@ export default function ChatWindow() {
     setUsername(parsedUser.name);
 
     socketRef.current = io('http://localhost:3000', {
-      auth: { token, CHAT_ID: groupName },
+      auth: { token, CHAT_ID },
     });
 
     socketRef.current.on('connect', () => {
       console.log('Connected to socket');
-      if (groupName) {
-        socketRef.current?.emit('join_room', groupName);
-        previousGroupRef.current = groupName;
+      if (CHAT_ID) {
+        socketRef.current?.emit('join_room', CHAT_ID);
+        previousGroupRef.current = CHAT_ID;
       } else {
         alert('שם הקבוצה לא תקין');
         navigate('/');
@@ -61,8 +65,8 @@ export default function ChatWindow() {
     socketRef.current.on('receive_message', (data: ChatMessage) => {
       setChat(prev => {
         const updatedChat = [...prev, data];
-        if (groupName) {
-          localStorage.setItem(`chatMessages_${groupName}`, JSON.stringify(updatedChat));
+        if (CHAT_ID) {
+          localStorage.setItem(`chatMessages_${CHAT_ID}`, JSON.stringify(updatedChat));
         }
         return updatedChat;
       });
@@ -70,15 +74,15 @@ export default function ChatWindow() {
 
     socketRef.current.on('chat_history', (messages: ChatMessage[]) => {
       setChat(messages);
-      if (groupName) {
-        localStorage.setItem(`chatMessages_${groupName}`, JSON.stringify(messages));
+      if (CHAT_ID) {
+        localStorage.setItem(`chatMessages_${CHAT_ID}`, JSON.stringify(messages));
       }
     });
 
     socketRef.current.on('clear_chat', () => {
       setChat([]);
-      if (groupName) {
-        localStorage.removeItem(`chatMessages_${groupName}`);
+      if (CHAT_ID) {
+        localStorage.removeItem(`chatMessages_${CHAT_ID}`);
       }
     });
 
@@ -86,24 +90,24 @@ export default function ChatWindow() {
       socketRef.current?.disconnect();
       socketRef.current = null;
     };
-  }, [navigate, groupName]);
+  }, [navigate, token, CHAT_ID]);
 
   useEffect(() => {
-    if (!groupName) return;
+    if (!CHAT_ID) return;
 
-    const storageKey = `chatMessages_${groupName}`;
+    const storageKey = `chatMessages_${CHAT_ID}`;
     const savedMessages = JSON.parse(localStorage.getItem(storageKey) || '[]');
     setChat(savedMessages);
 
     if (socketRef.current) {
-      if (previousGroupRef.current && previousGroupRef.current !== groupName) {
+      if (previousGroupRef.current && previousGroupRef.current !== CHAT_ID) {
         socketRef.current.emit('leave_room', previousGroupRef.current);
       }
-      socketRef.current.emit('join_room', groupName);
+      socketRef.current.emit('join_room', CHAT_ID);
     }
 
-    previousGroupRef.current = groupName;
-  }, [groupName]);
+    previousGroupRef.current = CHAT_ID;
+  }, [CHAT_ID]);
 
   useEffect(() => {
     if (chatBoxRef.current) {
@@ -112,10 +116,10 @@ export default function ChatWindow() {
   }, [chat]);
 
   const clearChat = () => {
-    if (!groupName) return;
-    localStorage.removeItem(`chatMessages_${groupName}`);
+    if (!CHAT_ID) return;
+    localStorage.removeItem(`chatMessages_${CHAT_ID}`);
     setChat([]);
-    socketRef.current?.emit('clear_room', groupName);
+    socketRef.current?.emit('clear_room', CHAT_ID);
   };
 
   const sendMessage = () => {
@@ -123,7 +127,7 @@ export default function ChatWindow() {
     socketRef.current?.emit('send_message', {
       message,
       sender: username,
-      room: groupName,
+      room: CHAT_ID,
     });
     setMessage('');
   };
@@ -137,27 +141,27 @@ export default function ChatWindow() {
   return (
     <div className="chat-window">
       <aside className="sidebar">
-  <h2 className="sidebar-title">🟢 קבוצת צ'אט</h2>
+        <h2 className="sidebar-title">🟢 קבוצת צ'אט</h2>
 
-  <p className="group-name">נוכחי: {groupName}</p>
+        <p className="group-name">נוכחי: {CHAT_ID}</p>
 
-  <div className="groups-list">
-    {JSON.parse(localStorage.getItem('chatGroups') || '[]').map((group: string, idx: number) => (
-      <button
-        key={idx}
-        className={`group-link ${group === groupName ? 'active' : ''}`}
-        onClick={() => navigate(`/chat/${group}`)}
-      >
-        {group}
-      </button>
-    ))}
-  </div>
+        <div className="groups-list">
+          {JSON.parse(localStorage.getItem('chatGroups') || '[]').map((group: string, idx: number) => (
+            <button
+              key={idx}
+              className={`group-link ${group === CHAT_ID ? 'active' : ''}`}
+              onClick={() => navigate(`/chat/${group}`)}
+            >
+              {group}
+            </button>
+          ))}
+        </div>
 
-  <div className="sidebar-actions">
-    <button className="btn btn-clear" onClick={clearChat}>נקה צ'אט</button>
-    <button className="btn btn-logout" onClick={handleLogout}>התנתקות</button>
-  </div>
-</aside>
+        <div className="sidebar-actions">
+          <button className="btn btn-clear" onClick={clearChat}>נקה צ'אט</button>
+          <button className="btn btn-logout" onClick={handleLogout}>התנתקות</button>
+        </div>
+      </aside>
 
       <main className="chat-main">
         <div ref={chatBoxRef} className="chat-box">
@@ -185,4 +189,30 @@ export default function ChatWindow() {
       </main>
     </div>
   );
-}
+};
+
+const ChatWindow: React.FC = () => {
+  const { groupName } = useParams<{ groupName: string }>();
+  const navigate = useNavigate();
+
+  const token = localStorage.getItem('token') || '';
+
+  useEffect(() => {
+    if (!token) {
+      alert('עליך להתחבר');
+      navigate('/login');
+      return;
+    }
+    if (!groupName) {
+      navigate('/');
+    }
+  }, [token, groupName, navigate]);
+
+  if (!groupName || !token) {
+    return <div>טוען...</div>;
+  }
+
+  return <ChatComponent token={token} CHAT_ID={groupName} />;
+};
+
+export default ChatWindow;

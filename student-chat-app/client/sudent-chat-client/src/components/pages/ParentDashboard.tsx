@@ -1,10 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
-interface Message {
-  content: string;
-  sentiment: string;
-  createdAt: string;
-}
+import { io, Socket } from 'socket.io-client';
 
 interface Message {
   content: string;
@@ -13,45 +9,81 @@ interface Message {
 }
 
 interface StudentData {
-  name: string;            // צריך להיות name, לא childName
+  name: string;
   score: number;
   flaggedMessages: Message[];
 }
-
 
 const ParentDashboard: React.FC = () => {
   const [student, setStudent] = useState<StudentData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // פונקציה לקבלת נתוני הילד מהשרת
+  const socketRef = useRef<Socket | null>(null);
+
   const fetchStudentData = async () => {
-  try {
-    setIsLoading(true);
-    setError(null);
+    try {
+      setIsLoading(true);
+      setError(null);
 
-    const token = localStorage.getItem('parentToken');
-    console.log('token:', token);
+      const token = localStorage.getItem('parentToken');
+      if (!token) throw new Error('No parent token found');
 
-    const res = await axios.get<StudentData>('http://localhost:3000/parent/student-info', {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+      const res = await axios.get<StudentData>('http://localhost:3000/parent/student-info', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-    console.log('Data received from server:', res.data);
-    setStudent(res.data);
-  } catch (err) {
-    console.error('Error fetching data:', err);
-    setError('אירעה שגיאה בטעינת הנתונים. נסה שוב מאוחר יותר.');
-  } finally {
-    setIsLoading(false);
-  }
-};
+      setStudent(res.data);
+    } catch (err: any) {
+      setError(err.message || 'אירעה שגיאה בטעינת הנתונים. נסה שוב מאוחר יותר.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
     fetchStudentData();
   }, []);
+
+  useEffect(() => {
+    const token = localStorage.getItem('parentToken');
+    if (!token) return;
+
+    // מחברים לשרת Socket.IO
+    const socket = io('http://localhost:3000', {
+      auth: { token },
+    });
+
+    socketRef.current = socket;
+
+    // מאזינים להתחברות מוצלחת
+    socket.on('connect', () => {
+      console.log('Connected to WebSocket server, registering parent');
+
+      // שולחים את המייל של ההורה לשרת (כדי לקבל עדכונים)
+      // נניח שמייל ההורה נמצא ב-token או צריך לשלוף אותו
+      // כאן אני מניח ששם הילד זה גם המייל, אפשר לשנות לפי הצורך
+      if (student?.name) {
+        socket.emit('registerParent', student.name);
+      }
+    });
+
+    // מאזינים לעדכוני סטודנט בזמן אמת
+    socket.on('studentDataUpdate', (data: StudentData) => {
+      console.log('Received student data update:', data);
+      setStudent(data);
+    });
+
+    socket.on('disconnect', () => {
+      console.log('Disconnected from WebSocket server');
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, [student?.name]); // ברגע ששם הילד מתעדכן, נרשמים מחדש
 
   if (isLoading) {
     return <div className="text-center mt-10 text-xl">⏳ טוען מידע...</div>;
