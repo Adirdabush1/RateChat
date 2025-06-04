@@ -10,14 +10,13 @@ export class AlertsController {
 
   @Post()
   async create(@Body() alert: CreateAlertDto) {
-    this.logger.warn(`⚠️ קיבלתם התראה ממערכת הצ'אט`);
-    this.logger.log(`סטודנט: ${alert.studentEmail}`);
-    this.logger.log(`הודעה: ${alert.message}`);
-    this.logger.log(`סיבה: ${alert.reason}`);
-    this.logger.log(`צ'אט: ${alert.chatId}`);
-    this.logger.log(`תאריך: ${alert.timestamp}`);
+    this.logger.warn(`⚠️ You received an alert from the chat system`);
+    this.logger.log(`Student: ${alert.studentEmail}`);
+    this.logger.log(`Message: ${alert.message}`);
+    this.logger.log(`Reason: ${alert.reason}`);
+    this.logger.log(`Chat ID: ${alert.chatId}`);
+    this.logger.log(`Timestamp: ${alert.timestamp}`);
 
-    
     return { status: 'ok' };
   }
 }

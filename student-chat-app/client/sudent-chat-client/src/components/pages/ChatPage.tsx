@@ -1,4 +1,3 @@
-// src/pages/ChatPage.tsx
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { io, Socket } from "socket.io-client";
@@ -17,7 +16,7 @@ export default function ChatPage() {
     const token = localStorage.getItem('token');
 
     if (!userJson || !token) {
-      alert('עליך להתחבר קודם');
+      alert('You must log in first');
       navigate('/login');
       return;
     }
@@ -25,18 +24,18 @@ export default function ChatPage() {
     try {
       const user = JSON.parse(userJson);
       if (!user || !user.name) {
-        alert('נתוני משתמש שגויים');
+        alert('Invalid user data');
         navigate('/login');
         return;
       }
       setUsername(user.name);
     } catch (error) {
-      alert('נתוני משתמש שגויים');
+      alert('Invalid user data');
       navigate('/login');
       return;
     }
 
-    const CHAT_ID = 'main_chat_room'; // מזהה צ'אט קבוע
+    const CHAT_ID = 'main_chat_room';
 
     socket = io('http://localhost:3000', {
       auth: {
@@ -83,12 +82,12 @@ export default function ChatPage() {
   return (
     <div style={{ padding: 20, fontFamily: 'sans-serif', direction: 'rtl' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h2>🟢 צ'אט חי - {username}</h2>
+        <h2>🟢 Live Chat - {username}</h2>
         <button
           onClick={handleLogout}
           style={{ padding: '5px 10px', background: '#eee', border: '1px solid #ccc' }}
         >
-          התנתקות
+          Logout
         </button>
       </div>
 
@@ -116,12 +115,12 @@ export default function ChatPage() {
           type="text"
           value={message}
           onChange={e => setMessage(e.target.value)}
-          placeholder="כתוב הודעה..."
+          placeholder="Type a message..."
           style={{ flex: 1, padding: 5 }}
           onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
         />
         <button onClick={sendMessage} style={{ padding: '5px 15px' }}>
-          שלח
+          Send
         </button>
       </div>
     </div>

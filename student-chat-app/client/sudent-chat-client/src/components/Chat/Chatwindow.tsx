@@ -29,7 +29,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ token, CHAT_ID }) => {
     const userData = localStorage.getItem('user');
 
     if (!token || !userData) {
-      alert('עליך להתחבר קודם');
+      alert('You must log in first');
       navigate('/login');
       return;
     }
@@ -38,7 +38,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ token, CHAT_ID }) => {
     try {
       parsedUser = JSON.parse(userData);
     } catch {
-      alert('אירעה שגיאה בטעינת פרטי המשתמש');
+      alert('An error occurred while loading user data');
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       navigate('/login');
@@ -57,25 +57,24 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ token, CHAT_ID }) => {
         socketRef.current?.emit('join_room', CHAT_ID);
         previousGroupRef.current = CHAT_ID;
       } else {
-        alert('שם הקבוצה לא תקין');
+        alert('Invalid group name');
         navigate('/');
       }
     });
 
     socketRef.current.on('receive_message', (data: ChatMessage) => {
-  setChat(prev => {
-    const updatedChat = [...prev, data];
-    if (CHAT_ID) {
-      localStorage.setItem(`chatMessages_${CHAT_ID}`, JSON.stringify(updatedChat));
-    }
-    return updatedChat;
-  });
+      setChat(prev => {
+        const updatedChat = [...prev, data];
+        if (CHAT_ID) {
+          localStorage.setItem(`chatMessages_${CHAT_ID}`, JSON.stringify(updatedChat));
+        }
+        return updatedChat;
+      });
 
-  if (data.alertParent) {
-    alert("⚠️ נשלחה הודעה להורה בעקבות תוכן פוגעני!");
-  }
-});
-
+      if (data.alertParent) {
+        alert("⚠️ A message was sent to a parent due to harmful content!");
+      }
+    });
 
     socketRef.current.on('chat_history', (messages: ChatMessage[]) => {
       setChat(messages);
@@ -146,9 +145,9 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ token, CHAT_ID }) => {
   return (
     <div className="chat-window">
       <aside className="sidebar">
-        <h2 className="sidebar-title">🟢 קבוצת צ'אט</h2>
+        <h2 className="sidebar-title">🟢 Chat Group</h2>
 
-        <p className="group-name">נוכחי: {CHAT_ID}</p>
+        <p className="group-name">Current: {CHAT_ID}</p>
 
         <div className="groups-list">
           {JSON.parse(localStorage.getItem('chatGroups') || '[]').map((group: string, idx: number) => (
@@ -163,8 +162,8 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ token, CHAT_ID }) => {
         </div>
 
         <div className="sidebar-actions">
-          <button className="btn btn-clear" onClick={clearChat}>נקה צ'אט</button>
-          <button className="btn btn-logout" onClick={handleLogout}>התנתקות</button>
+          <button className="btn btn-clear" onClick={clearChat}>Clear Chat</button>
+          <button className="btn btn-logout" onClick={handleLogout}>Logout</button>
         </div>
       </aside>
 
@@ -185,11 +184,11 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ token, CHAT_ID }) => {
             type="text"
             value={message}
             onChange={e => setMessage(e.target.value)}
-            placeholder="כתוב הודעה..."
+            placeholder="Type a message..."
             onKeyDown={e => e.key === 'Enter' && sendMessage()}
             className="chat-input"
           />
-          <button onClick={sendMessage} className="btn btn-send">שלח</button>
+          <button onClick={sendMessage} className="btn btn-send">Send</button>
         </div>
       </main>
     </div>
@@ -204,7 +203,7 @@ const ChatWindow: React.FC = () => {
 
   useEffect(() => {
     if (!token) {
-      alert('עליך להתחבר');
+      alert('You must log in');
       navigate('/login');
       return;
     }
@@ -214,7 +213,7 @@ const ChatWindow: React.FC = () => {
   }, [token, groupName, navigate]);
 
   if (!groupName || !token) {
-    return <div>טוען...</div>;
+    return <div>Loading...</div>;
   }
 
   return <ChatComponent token={token} CHAT_ID={groupName} />;

@@ -1,25 +1,23 @@
 import { Link } from 'react-router-dom';
 import RegisterForm from '../Auth/RegisterForm';
-import './styles/Login.css'; 
+import './styles/Login.css';
 
 export default function RegisterPage() {
   return (
     <div className="login-page">
-      {/* רקע דקורטיבי */}
       <div className="login-background">
         <div className="shape"></div>
         <div className="shape"></div>
       </div>
 
-      {/* טופס הרשמה */}
       <div className="login-form-container">
-        <h2>הרשמה</h2>
+        <h2>Register</h2>
         <RegisterForm />
 
         <div className="extra-links">
-          <p>כבר יש לך חשבון?</p>
+          <p>Already have an account?</p>
           <Link to="/login">
-            <button className="register-button">כניסה</button>
+            <button className="register-button">Login</button>
           </Link>
         </div>
       </div>

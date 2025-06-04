@@ -11,10 +11,10 @@ export type AIAnalysis = {
   alertParent: boolean;
   score?: number;
   scoreChange?: number;
-  sentiment: 'חיובי' | 'נייטרלי' | 'שלילי';
+  sentiment: 'positive' | 'neutral' | 'negative';
 };
 
-// טיפוס לתגובה של Perspective API (רלוונטי לחלק attributeScores)
+
 type AttributeScores = {
   [key: string]: {
     summaryScore: {
@@ -32,16 +32,15 @@ function getToxicityScore(attributes: AttributeScores | undefined): number {
   return attributes.TOXICITY?.summaryScore?.value ?? 0;
 }
 
-function determineSentiment(score: number): 'חיובי' | 'נייטרלי' | 'שלילי' {
-  if (score > 0.6) return 'שלילי';
-  if (score < 0.4) return 'חיובי';
-  return 'נייטרלי';
+function determineSentiment(score: number): 'positive' | 'neutral' | 'negative' {
+  if (score > 0.6) return 'negative';
+  if (score < 0.4) return 'positive';
+  return 'neutral';
 }
 
-export async function analyzeMessageHebrew(message: string): Promise<AIAnalysis> {
+export async function analyzeMessageEnglish(message: string): Promise<AIAnalysis> {
   try {
     const url = `https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze?key=${PERSPECTIVE_API_KEY}`;
-
 
     const data = {
       comment: { text: message },
@@ -72,7 +71,7 @@ export async function analyzeMessageHebrew(message: string): Promise<AIAnalysis>
           reasons.push(attr.toLowerCase());
         }
       }
-      reason = 'הודעה מכילה: ' + reasons.join(', ');
+      reason = 'Message contains: ' + reasons.join(', ');
     }
 
     return {
@@ -89,7 +88,7 @@ export async function analyzeMessageHebrew(message: string): Promise<AIAnalysis>
       toxic: false,
       reason: '',
       alertParent: false,
-      sentiment: 'נייטרלי',
+      sentiment: 'neutral',
     };
   }
 }

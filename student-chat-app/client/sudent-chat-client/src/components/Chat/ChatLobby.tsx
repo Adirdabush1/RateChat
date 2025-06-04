@@ -10,7 +10,7 @@ export default function ChatLobby() {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) {
-      alert('עליך להתחבר קודם');
+      alert('You must log in first');
       navigate('/login');
       return;
     }
@@ -35,16 +35,16 @@ export default function ChatLobby() {
   return (
     <div className="chat-lobby-page">
       <div className="chat-lobby-container">
-        <h2>👥 ברוך הבא לצ'אט</h2>
-        <p>בחר קבוצה קיימת או צור אחת חדשה:</p>
+        <h2>👥 Welcome to the Chat</h2>
+        <p>Select an existing group or create a new one:</p>
 
         <div className="input-group">
           <input
             value={newGroup}
             onChange={(e) => setNewGroup(e.target.value)}
-            placeholder="שם הקבוצה החדשה"
+            placeholder="New group name"
           />
-          <button onClick={handleCreateGroup}>➕ צור קבוצה</button>
+          <button onClick={handleCreateGroup}>➕ Create Group</button>
         </div>
 
         <ul className="groups-list">

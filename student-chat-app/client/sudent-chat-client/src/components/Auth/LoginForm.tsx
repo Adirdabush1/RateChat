@@ -14,10 +14,10 @@ export default function LoginForm() {
       const result = await loginUser(email, password);
       localStorage.setItem('token', result.access_token);
       localStorage.setItem('user', JSON.stringify({ name: result.name, email }));
-      setMessage('התחברת בהצלחה!');
+      setMessage('Logged in successfully!');
       navigate('/chat');
     } catch (error: any) {
-      setMessage(error.response?.data?.message || 'שגיאה בעת התחברות');
+      setMessage(error.response?.data?.message || 'Login error');
     }
   };
 
@@ -25,7 +25,7 @@ export default function LoginForm() {
     <form onSubmit={handleSubmit}>
       <input
         type="email"
-        placeholder="אימייל"
+        placeholder="Email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         required
@@ -33,16 +33,16 @@ export default function LoginForm() {
       />
       <input
         type="password"
-        placeholder="סיסמה"
+        placeholder="Password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         required
         style={{ padding: 8, width: '100%', marginBottom: 10 }}
       />
       <button type="submit" style={{ padding: 10, width: '100%' }}>
-        התחבר
+        Log In
       </button>
-      <p style={{ color: message.includes('שגיאה') ? 'red' : 'green', marginTop: 10 }}>{message}</p>
+      <p style={{ color: message.includes('error') ? 'red' : 'green', marginTop: 10 }}>{message}</p>
     </form>
   );
 }

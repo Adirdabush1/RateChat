@@ -37,7 +37,7 @@ const ParentDashboard: React.FC = () => {
 
       setStudent(res.data);
     } catch (err: any) {
-      setError(err.message || 'אירעה שגיאה בטעינת הנתונים. נסה שוב מאוחר יותר.');
+      setError(err.message || 'An error occurred while loading data. Please try again later.');
     } finally {
       setIsLoading(false);
     }
@@ -51,26 +51,20 @@ const ParentDashboard: React.FC = () => {
     const token = localStorage.getItem('parentToken');
     if (!token) return;
 
-    // מחברים לשרת Socket.IO
     const socket = io('http://localhost:3000', {
       auth: { token },
     });
 
     socketRef.current = socket;
 
-    // מאזינים להתחברות מוצלחת
     socket.on('connect', () => {
       console.log('Connected to WebSocket server, registering parent');
 
-      // שולחים את המייל של ההורה לשרת (כדי לקבל עדכונים)
-      // נניח שמייל ההורה נמצא ב-token או צריך לשלוף אותו
-      // כאן אני מניח ששם הילד זה גם המייל, אפשר לשנות לפי הצורך
       if (student?.name) {
         socket.emit('registerParent', student.name);
       }
     });
 
-    // מאזינים לעדכוני סטודנט בזמן אמת
     socket.on('studentDataUpdate', (data: StudentData) => {
       console.log('Received student data update:', data);
       setStudent(data);
@@ -83,10 +77,10 @@ const ParentDashboard: React.FC = () => {
     return () => {
       socket.disconnect();
     };
-  }, [student?.name]); // ברגע ששם הילד מתעדכן, נרשמים מחדש
+  }, [student?.name]);
 
   if (isLoading) {
-    return <div className="text-center mt-10 text-xl">⏳ טוען מידע...</div>;
+    return <div className="text-center mt-10 text-xl">⏳ Loading data...</div>;
   }
 
   if (error) {
@@ -97,38 +91,38 @@ const ParentDashboard: React.FC = () => {
           onClick={fetchStudentData}
           className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
         >
-          נסה שוב
+          Try Again
         </button>
       </div>
     );
   }
 
   if (!student) {
-    return <div className="text-center mt-10">לא נמצא מידע על הילד.</div>;
+    return <div className="text-center mt-10">No student data found.</div>;
   }
 
   return (
-    <div className="p-6 max-w-4xl mx-auto" dir="rtl">
-      <h1 className="text-3xl font-bold mb-4">👋 שלום {student.name}</h1>
+    <div className="p-6 max-w-4xl mx-auto" dir="ltr">
+      <h1 className="text-3xl font-bold mb-4">👋 Hello {student.name}</h1>
 
       <div className="bg-green-100 p-4 rounded shadow mb-6">
         <p className="text-xl">
-          💯 ניקוד כללי של הילד: <strong>{student.score}</strong>
+          💯 Overall Student Score: <strong>{student.score}</strong>
         </p>
       </div>
 
-      <h2 className="text-2xl font-semibold mb-2">🚨 הודעות חריגות</h2>
+      <h2 className="text-2xl font-semibold mb-2">🚨 Flagged Messages</h2>
 
       {student.flaggedMessages && student.flaggedMessages.length === 0 ? (
-        <p className="text-gray-700">אין הודעות חריגות.</p>
+        <p className="text-gray-700">No flagged messages.</p>
       ) : (
         <ul className="space-y-3">
           {student.flaggedMessages?.map((msg, index) => (
             <li key={index} className="bg-red-100 p-4 rounded shadow">
-              <p><strong>תוכן:</strong> {msg.content}</p>
-              <p><strong>מצב רוח:</strong> {msg.sentiment}</p>
+              <p><strong>Content:</strong> {msg.content}</p>
+              <p><strong>Sentiment:</strong> {msg.sentiment}</p>
               <p className="text-sm text-gray-600">
-                🕒 {new Date(msg.createdAt).toLocaleString('he-IL', {
+                🕒 {new Date(msg.createdAt).toLocaleString('en-US', {
                   dateStyle: 'short',
                   timeStyle: 'short',
                 })}

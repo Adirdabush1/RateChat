@@ -13,7 +13,7 @@ import { OnModuleInit, Logger } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
 import { JwtService } from '@nestjs/jwt';
 import axios from 'axios';
-import { analyzeMessageHebrew, AIAnalysis } from './service/analyzeMessage';
+import { analyzeMessageEnglish, AIAnalysis } from './service/analyzeMessage';
 
 import { MessagesService } from './messages/messages.service';
 import { UsersService } from './users/users.service';
@@ -63,9 +63,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       client.emit('chat_history', history);
 
       this.server.to(CHAT_ID).emit('receive_message', {
-        sender: 'מערכת',
-        message: `${payload.email} הצטרף לצ'אט ${CHAT_ID}`,
-        
+        sender: 'System',
+        message: `${payload.email} joined chat ${CHAT_ID}`,
       });
     } catch (err: any) {
       this.logger.error('Invalid token', err.message);
@@ -84,8 +83,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     }
 
     this.server.to(CHAT_ID).emit('receive_message', {
-      sender: 'מערכת',
-      message: `${email} התנתק מהצ'אט`,
+      sender: 'System',
+      message: `${email} disconnected from chat`,
       CHAT_ID,
     });
   }
@@ -113,12 +112,12 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     }
 
     try {
-      const analysis: AIAnalysis = await analyzeMessageHebrew(data.message);
+      const analysis: AIAnalysis = await analyzeMessageEnglish(data.message);
 
       if (analysis.toxic) {
-        this.logger.warn('הודעה טוקסית:', analysis.reason);
+        this.logger.warn('Toxic message detected:', analysis.reason);
         if (analysis.alertParent) {
-          // כאן אפשר לממש שליחת התראה להורה
+          
         }
       }
 

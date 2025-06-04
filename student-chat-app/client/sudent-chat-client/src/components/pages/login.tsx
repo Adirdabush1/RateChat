@@ -11,17 +11,17 @@ export default function LoginPage() {
       </div>
 
       <div className="login-form-container">
-        <h2>התחברות</h2>
+        <h2>Login</h2>
         <LoginForm />
 
         <div className="extra-links">
           <div>
-            <Link to="/login-parent">כניסת הורה</Link>
+            <Link to="/login-parent">Parent Login</Link>
           </div>
 
           <div>
             <Link to="/register">
-              <button className="register-button">להרשמה</button>
+              <button className="register-button">Register</button>
             </Link>
           </div>
         </div>

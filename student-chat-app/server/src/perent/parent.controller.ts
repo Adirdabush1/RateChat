@@ -6,7 +6,6 @@ import { ParentService } from './perent.service';
 export class ParentController {
   constructor(private readonly parentService: ParentService) {}
 
-  // parent.controller.ts
 @Get('student-info')
 async getStudentInfo(@Query('parentEmail') parentEmail: string) {
   return this.parentService.getStudentInfo(parentEmail); 
