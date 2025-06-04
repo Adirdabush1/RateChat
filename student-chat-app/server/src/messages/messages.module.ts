@@ -9,7 +9,7 @@ import { AlertsModule } from '../alerts/alerts.module'; // הוספת הייבו
   imports: [
     MongooseModule.forFeature([{ name: Message.name, schema: MessageSchema }]),
     UsersModule,
-    AlertsModule,  // הוספה
+    AlertsModule,
   ],
   providers: [MessagesService],
   exports: [MessagesService],

@@ -1,4 +1,3 @@
-// src/perent/parent.schema.ts
 import { Schema, Document } from 'mongoose';
 
 export interface Parent extends Document {

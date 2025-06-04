@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { registerParent } from '../services/api';
-import './styles/Login.css'; 
+import './styles/Login.css';
 
 export default function RegisterParent() {
   const [formData, setFormData] = useState({
@@ -21,29 +21,27 @@ export default function RegisterParent() {
     e.preventDefault();
     try {
       await registerParent(formData);
-      alert('ההרשמה הצליחה');
+      alert('Registration successful');
       navigate('/parent-dashboard');
     } catch (err) {
-      alert('שגיאה בהרשמה');
+      alert('Registration error');
       console.error(err);
     }
   };
 
   return (
     <div className="login-page">
-      {/* רקעים דקורטיביים */}
       <div className="login-background">
         <div className="shape"></div>
         <div className="shape"></div>
       </div>
 
-      {/* טופס שקוף */}
       <form onSubmit={handleSubmit} className="login-form-container">
-        <h2>הרשמת הורה</h2>
+        <h2>Parent Registration</h2>
 
         <input
           name="name"
-          placeholder="שם מלא"
+          placeholder="Full Name"
           value={formData.name}
           onChange={handleChange}
           required
@@ -51,7 +49,7 @@ export default function RegisterParent() {
         <input
           name="email"
           type="email"
-          placeholder="אימייל"
+          placeholder="Email"
           value={formData.email}
           onChange={handleChange}
           required
@@ -59,7 +57,7 @@ export default function RegisterParent() {
         <input
           name="password"
           type="password"
-          placeholder="סיסמה"
+          placeholder="Password"
           value={formData.password}
           onChange={handleChange}
           required
@@ -67,17 +65,16 @@ export default function RegisterParent() {
         <input
           name="childEmail"
           type="email"
-          placeholder="אימייל של הילד"
+          placeholder="Child's Email"
           value={formData.childEmail}
           onChange={handleChange}
           required
         />
 
-        <button type="submit">הירשם כהורה</button>
+        <button type="submit">Register as Parent</button>
 
-        {/* קישור חזרה לכניסה */}
         <div className="extra-links">
-          <a href="/login-parent">כבר רשום? לחץ כאן לכניסה</a>
+          <a href="/login-parent">Already registered? Click here to login</a>
         </div>
       </form>
     </div>

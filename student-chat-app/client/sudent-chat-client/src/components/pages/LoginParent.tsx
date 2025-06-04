@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import './styles/Login.css'; // CSS כמו של login-page
+import './styles/Login.css';
 
 interface ParentLoginResponse {
   token: string;
@@ -32,30 +32,28 @@ const LoginParent: React.FC = () => {
       const token = response.data.token;
       localStorage.setItem('parentToken', token);
 
-      alert('התחברת בהצלחה!');
+      alert('Logged in successfully!');
       window.location.href = '/parent-dashboard';
     } catch (error) {
-      console.error('שגיאה בכניסה:', error);
-      alert('פרטי התחברות שגויים או שגיאה בשרת');
+      console.error('Login error:', error);
+      alert('Incorrect login details or server error');
     }
   };
 
   return (
     <div className="login-page">
-      {/* רקעים דקורטיביים */}
       <div className="login-background">
         <div className="shape"></div>
         <div className="shape"></div>
       </div>
 
-      {/* טופס שקוף */}
       <form onSubmit={handleSubmit} className="login-form-container">
-        <h2>כניסת הורה</h2>
+        <h2>Parent Login</h2>
 
         <input
           type="email"
           name="email"
-          placeholder="אימייל"
+          placeholder="Email"
           value={formData.email}
           onChange={handleChange}
           required
@@ -64,17 +62,16 @@ const LoginParent: React.FC = () => {
         <input
           type="password"
           name="password"
-          placeholder="סיסמה"
+          placeholder="Password"
           value={formData.password}
           onChange={handleChange}
           required
         />
 
-        <button type="submit">התחבר כהורה</button>
+        <button type="submit">Login as Parent</button>
 
-        {/* קישור להרשמה */}
         <div className="extra-links">
-          <Link to="/register-parent">אין לך חשבון? לחץ כאן להרשמה</Link>
+          <Link to="/register-parent">Don't have an account? Click here to register</Link>
         </div>
       </form>
     </div>

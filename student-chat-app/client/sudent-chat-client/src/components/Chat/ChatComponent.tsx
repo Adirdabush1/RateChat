@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from 'react';
 import { connectSocket, disconnectSocket, getSocket } from '../utils/socket';
 
-
 type Props = {
   token: string;
   CHAT_ID: string;
@@ -10,48 +9,49 @@ type Props = {
 
 const ChatComponent: React.FC<Props> = ({ token, CHAT_ID }) => {
   const [messages, setMessages] = useState<{ sender: string; message: string }[]>([]);
-useEffect(() => {
-  if (!token || !CHAT_ID) return;
 
-  const socket = connectSocket(token, CHAT_ID);
+  useEffect(() => {
+    if (!token || !CHAT_ID) return;
 
-  socket.on('connect', () => {
-    console.log('🔌 Socket connected');
-  });
+    const socket = connectSocket(token, CHAT_ID);
 
-  socket.on('chat_history', (history) => {
-    console.log('🕘 Chat history received:', history);
-    setMessages(history);
-  });
+    socket.on('connect', () => {
+      console.log('🔌 Socket connected');
+    });
 
-  socket.on('receive_message', (message) => {
-    console.log('📩 New message received:', message);
-    setMessages((prev) => [...prev, message]);
-  });
+    socket.on('chat_history', (history) => {
+      console.log('🕘 Chat history received:', history);
+      setMessages(history);
+    });
 
-  socket.on('disconnect', () => {
-    console.log('🔌 Socket disconnected');
-  });
+    socket.on('receive_message', (message) => {
+      console.log('📩 New message received:', message);
+      setMessages((prev) => [...prev, message]);
+    });
 
-  return () => {
-    disconnectSocket();
-  };
-}, [token, CHAT_ID]);
+    socket.on('disconnect', () => {
+      console.log('🔌 Socket disconnected');
+    });
 
-  // פונקציה לשליחת הודעה
+    return () => {
+      disconnectSocket();
+    };
+  }, [token, CHAT_ID]);
+
+  // Function to send a message
   const sendMessage = (text: string) => {
-  const socket = getSocket();
-  if (!socket) {
-    console.warn('⚠️ No socket connection');
-    return;
-  }
+    const socket = getSocket();
+    if (!socket) {
+      console.warn('⚠️ No socket connection');
+      return;
+    }
 
-  if (socket.connected) {
-    socket.emit('send_message', { message: text });
-  } else {
-    console.warn('⚠️ Socket not connected yet');
-  }
-};
+    if (socket.connected) {
+      socket.emit('send_message', { message: text });
+    } else {
+      console.warn('⚠️ Socket not connected yet');
+    }
+  };
 
   return (
     <div>
@@ -83,11 +83,11 @@ const SendMessageForm: React.FC<{ onSend: (text: string) => void }> = ({ onSend 
     <form onSubmit={handleSubmit}>
       <input
         type="text"
-        placeholder="כתוב הודעה..."
+        placeholder="Type a message..."
         value={text}
         onChange={(e) => setText(e.target.value)}
       />
-      <button type="submit">שלח</button>
+      <button type="submit">Send</button>
     </form>
   );
 };

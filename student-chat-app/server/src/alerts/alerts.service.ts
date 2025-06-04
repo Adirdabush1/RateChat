@@ -9,8 +9,8 @@ export class AlertsService {
   private transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: process.env.EMAIL_USER, // כתובת Gmail
-      pass: process.env.EMAIL_PASS, // סיסמת אפליקציה (ולא סיסמה רגילה)
+      user: process.env.EMAIL_USER, // Gmail address
+      pass: process.env.EMAIL_PASS, // App password (not regular password)
     },
   });
 
@@ -18,20 +18,20 @@ export class AlertsService {
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to,
-      subject: 'התראה על הודעה חריגה',
+      subject: 'Alert: Suspicious Message Detected',
       text: message,
     };
 
     try {
       await this.transporter.sendMail(mailOptions);
-      console.log(`נשלחה הודעת התראה אל ${to}`);
+      console.log(`Alert email sent to ${to}`);
     } catch (error) {
-      console.error('שגיאה בשליחת מייל:', error);
+      console.error('Error sending email:', error);
     }
   }
-sendAlertToParent(alert: CreateAlertDto, Message?: Message): Promise<void> {
-  const { studentEmail, message } = alert;
-  return this.sendAlertEmail(studentEmail, message);
-}
 
+  sendAlertToParent(alert: CreateAlertDto, message?: Message): Promise<void> {
+    const { studentEmail, message: alertMessage } = alert;
+    return this.sendAlertEmail(studentEmail, alertMessage);
+  }
 }

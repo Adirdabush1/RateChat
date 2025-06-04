@@ -8,7 +8,7 @@ import { MailerService } from '../mailer/mailer.service'; // חדש
 @Module({
   imports: [UsersModule, MessagesModule],
   controllers: [ParentController],
-  providers: [ParentService, MailerService], // נוספה שורה
+  providers: [ParentService, MailerService], 
   exports: [ParentService]
 })
 export class ParentModule {}

@@ -6,21 +6,22 @@ import { RegisterParentDto } from './dto/register-parent.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Parent } from '../perent/parent.schema';
+
 @Injectable()
 export class AuthService {
   constructor(
-        @InjectModel('Parent') private parentModel: Model<Parent>,
+    @InjectModel('Parent') private parentModel: Model<Parent>,
     private usersService: UsersService,
     private jwtService: JwtService,
   ) {}
 
-  // פונקציה להצפנת סיסמה
+  // Function to hash password
   async hashPassword(password: string): Promise<string> {
     const saltRounds = 10;
     return bcrypt.hash(password, saltRounds);
   }
 
-  // רישום משתמש חדש עם role (ברירת מחדל: 'student')
+  // Register a new user with role (default: 'student')
   async register(email: string, password: string, role: string = 'student') {
     const existingUser = await this.usersService.findByEmail(email);
     if (existingUser) {
@@ -33,7 +34,7 @@ export class AuthService {
     return { message: 'User registered successfully' };
   }
 
-  // בדיקת משתמש וסיסמה
+  // Validate user credentials
   async validateUser(email: string, password: string) {
     const user = await this.usersService.findByEmail(email);
     if (user && (await bcrypt.compare(password, user.password))) {
@@ -42,7 +43,7 @@ export class AuthService {
     return null;
   }
 
-  // התחברות - מחזיר JWT במידה והפרטים נכונים
+  // Login - returns JWT if credentials are correct
   async login(email: string, password: string) {
     const user = await this.validateUser(email, password);
     if (!user) {
@@ -54,35 +55,36 @@ export class AuthService {
       name: user.name,
     };
   }
-  // auth.service.ts
-async registerParent(dto: RegisterParentDto) {
-  const hashed = await bcrypt.hash(dto.password, 10);
-  const parent = await this.parentModel.create({
-    name: dto.name,
-    email: dto.email,
-    password: hashed,
-    childEmail: dto.childEmail,
-  });
-  return parent;
-}
-async loginParent(email: string, password: string) {
-  const parent = await this.parentModel.findOne({ email });
-  if (!parent) {
-    throw new UnauthorizedException('Parent not found');
+
+  // Register a new parent user
+  async registerParent(dto: RegisterParentDto) {
+    const hashed = await bcrypt.hash(dto.password, 10);
+    const parent = await this.parentModel.create({
+      name: dto.name,
+      email: dto.email,
+      password: hashed,
+      childEmail: dto.childEmail,
+    });
+    return parent;
   }
 
-  const passwordMatch = await bcrypt.compare(password, parent.password);
-  if (!passwordMatch) {
-    throw new UnauthorizedException('Invalid credentials');
+  // Parent login - returns JWT if credentials are correct
+  async loginParent(email: string, password: string) {
+    const parent = await this.parentModel.findOne({ email });
+    if (!parent) {
+      throw new UnauthorizedException('Parent not found');
+    }
+
+    const passwordMatch = await bcrypt.compare(password, parent.password);
+    if (!passwordMatch) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    const payload = { email: parent.email, sub: parent._id, role: 'parent' };
+
+    return {
+      access_token: this.jwtService.sign(payload),
+      name: parent.name,
+    };
   }
-
-  const payload = { email: parent.email, sub: parent._id, role: 'parent' };
-
-  return {
-    access_token: this.jwtService.sign(payload),
-    name: parent.name,
-  };
-}
-
-
 }

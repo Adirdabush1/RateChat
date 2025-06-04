@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { MessagesService } from '../messages/messages.service';
-import { MailerService } from '../mailer/mailer.service'; // חדש
+import { MailerService } from '../mailer/mailer.service'; 
 
 @Injectable()
 export class ParentService {
   constructor(
     private readonly usersService: UsersService,
     private readonly messagesService: MessagesService,
-    private readonly mailerService: MailerService // חדש
+    private readonly mailerService: MailerService 
   ) {}
 
   async getStudentInfo(studentEmail: string): Promise<{
@@ -23,7 +23,7 @@ export class ParentService {
 
     const flaggedMessages = await this.messagesService.getFlaggedMessagesByStudentEmail(studentEmail);
 
-    // שליחת מייל אם נמצאו הודעות מסומנות ולהורה יש אימייל
+    
     if (flaggedMessages.length > 0 && student.parentEmail) {
       await this.mailerService.sendAlertEmail(
         student.parentEmail,
@@ -39,18 +39,18 @@ export class ParentService {
     };
   }
   async handleNewMessage(sender: string, message: string, CHAT_ID: string, score: number) {
-  // שומרים את ההודעה
+  
   const savedMessage = await this.messagesService.saveMessage(sender, message, CHAT_ID, score);
 
-  // אם הניקוד נמוך, מורידים ניקוד ושולחים מייל להורה
+  
   if (score < 50) {
     const student = await this.usersService.findByEmail(sender);
     if (student) {
-      // הורדת ניקוד לדוגמה -5 נקודות
+      
       student.score = Math.max(0, student.score - 5);
       await this.usersService.updateScore(student.email, student.score);
 
-      // שליחת מייל להורה
+      
       if (student.parentEmail) {
         await this.mailerService.sendAlertEmail(
           student.parentEmail,

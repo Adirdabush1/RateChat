@@ -1,12 +1,9 @@
-/* LoginPage.css */
-
 .login-page {
   background-color: #080710;
   font-family: 'Poppins', sans-serif;
   min-height: 100vh;
 }
 
-/* רקע דקורטיבי */
 .login-page .login-background {
   width: 430px;
   height: 520px;
@@ -36,7 +33,6 @@
   bottom: -80px;
 }
 
-/* טופס התחברות */
 .login-page .login-form-container {
   height: 520px;
   width: 400px;
@@ -83,7 +79,6 @@
   cursor: pointer;
 }
 
-/* עיצוב מודרני ל-inputs */
 .login-page input {
   display: block;
   width: 100%;
