@@ -1,28 +1,21 @@
-const API_URL = 'https://ratechat2.onrender.com';
+import axios from 'axios';
 
-export const registerParent = async (data: {
-  email: string;
-  password: string;
-  name: string;
-  childEmail: string;
-}) => {
-  const res = await fetch(`${API_URL}/auth/register-parent`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data),
-  });
+const API_URL = 'https://ratechat2.onrender.com'; // כתובת ה-API ב-Render
 
-  if (!res.ok) throw new Error('Registration failed');
-  return res.json();
+export const registerUser = async (email: string, password: string) => {
+  const response = await axios.post(`${API_URL}/register`, { email, password });
+  return response.data;
 };
 
-export const loginParent = async (data: { email: string; password: string }) => {
-  const res = await fetch(`${API_URL}/auth/login-parent`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data),
-  });
+export interface LoginResponse {
+  access_token: string;
+  name: string;
+}
 
-  if (!res.ok) throw new Error('Login failed');
-  return res.json();
+export const loginUser = async (
+  email: string,
+  password: string
+): Promise<LoginResponse> => {
+  const response = await axios.post<LoginResponse>(`${API_URL}/login`, { email, password });
+  return response.data;
 };

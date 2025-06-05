@@ -51,7 +51,7 @@ const ParentDashboard: React.FC = () => {
     const token = localStorage.getItem('parentToken');
     if (!token) return;
 
-    const socket = io('http://localhost:3000', {
+    const socket = io('https://ratechat-1.onrender.com', {
       auth: { token },
     });
 

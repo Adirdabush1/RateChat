@@ -1,4 +1,3 @@
-// src/components/Chat/Chatwindow.tsx
 import React, { useEffect, useRef, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { io, Socket } from 'socket.io-client';
@@ -47,7 +46,8 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ token, CHAT_ID }) => {
 
     setUsername(parsedUser.name);
 
-    socketRef.current = io('http://localhost:3000', {
+    // חשוב לשים כאן את הכתובת של השרת הרץ בענן (Render)
+    socketRef.current = io('https://ratechat-1.onrender.com', {
       auth: { token, CHAT_ID },
     });
 
