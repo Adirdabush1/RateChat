@@ -163,7 +163,7 @@ exports.ChatGateway = ChatGateway = __decorate([
         },
     }),
     __metadata("design:paramtypes", [messages_service_1.MessagesService,
-        jwt_1.JwtService,
-        users_service_1.UsersService])
+    jwt_1.JwtService,
+    users_service_1.UsersService])
 ], ChatGateway);
 //# sourceMappingURL=chat.gateway.js.map

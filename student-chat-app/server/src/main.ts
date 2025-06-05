@@ -1,20 +1,19 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import * as path from 'path';
+import * as express from 'express';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // אפשר CORS למספר מקורות - מקומי ופרודקשן
   const allowedOrigins = [
-    'http://localhost:5173',           // לפיתוח מקומי
-    'https://ratechat2.onrender.com',  // כתובת הפרונט ב-Render
+    'http://localhost:5173',
+    'https://your-frontend-domain.onrender.com',
   ];
 
   app.enableCors({
     origin: (origin, callback) => {
-      // אם origin הוא undefined (לדוגמה בקשות משרתים), אפשר להמשיך
       if (!origin) return callback(null, true);
-
       if (allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
@@ -22,6 +21,16 @@ async function bootstrap() {
       }
     },
     credentials: true,
+  });
+
+  const expressApp = app.getHttpAdapter().getInstance();
+
+  const reactBuildPath = path.join(__dirname, '..', 'client', 'dist'); // או 'build' לפי מצבך
+
+  expressApp.use(express.static(reactBuildPath));
+
+  expressApp.get('*', (req, res) => {
+    res.sendFile(path.join(reactBuildPath, 'index.html'));
   });
 
   const port = process.env.PORT || 3000;
