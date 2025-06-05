@@ -1,10 +1,8 @@
-import { OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
-import { OnModuleInit } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
 import { JwtService } from '@nestjs/jwt';
 import { MessagesService } from './messages/messages.service';
 import { UsersService } from './users/users.service';
-export declare class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, OnModuleInit {
+export declare class ChatGateway {
     private readonly messagesService;
     private readonly jwtService;
     private readonly usersService;
