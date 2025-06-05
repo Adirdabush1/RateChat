@@ -15,16 +15,30 @@ export default function ChatLobby() {
       return;
     }
 
-    const savedGroups = JSON.parse(localStorage.getItem('chatGroups') || '[]');
-    setGroups(savedGroups);
+    try {
+      const savedGroups = JSON.parse(localStorage.getItem('chatGroups') || '[]');
+
+      const validGroups = Array.isArray(savedGroups)
+        ? savedGroups.filter(group => typeof group === 'string')
+        : [];
+
+      setGroups(validGroups);
+    } catch (err) {
+      console.error('Error reading chatGroups from localStorage', err);
+      setGroups([]);
+    }
   }, [navigate]);
 
   const handleCreateGroup = () => {
     if (!newGroup.trim()) return;
 
-    const updatedGroups = [...groups, newGroup.trim()];
-    setGroups(updatedGroups);
-    localStorage.setItem('chatGroups', JSON.stringify(updatedGroups));
+    const cleanedName = newGroup.trim();
+    const updatedGroups = [...groups, cleanedName];
+
+    const uniqueGroups = Array.from(new Set(updatedGroups));
+
+    setGroups(uniqueGroups);
+    localStorage.setItem('chatGroups', JSON.stringify(uniqueGroups));
     setNewGroup('');
   };
 
@@ -48,11 +62,13 @@ export default function ChatLobby() {
         </div>
 
         <ul className="groups-list">
-          {groups.map((group, idx) => (
-            <li key={idx}>
-              <button onClick={() => enterGroup(group)}>🔹 {group}</button>
-            </li>
-          ))}
+          {groups.map((group, idx) =>
+            typeof group === 'string' ? (
+              <li key={idx}>
+                <button onClick={() => enterGroup(group)}>🔹 {group}</button>
+              </li>
+            ) : null
+          )}
         </ul>
       </div>
     </div>
