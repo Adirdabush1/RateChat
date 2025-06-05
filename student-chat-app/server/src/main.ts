@@ -8,12 +8,12 @@ async function bootstrap() {
 
   const allowedOrigins = [
     'http://localhost:5173',
-    'https://your-frontend-domain.onrender.com',
+    'https://ratechat2.onrender.com',
   ];
 
   app.enableCors({
     origin: (origin, callback) => {
-      if (!origin) return callback(null, true);
+      if (!origin) return callback(null, true); // לאפשר בקשות ללא מקור (למשל Postman)
       if (allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
@@ -24,8 +24,7 @@ async function bootstrap() {
   });
 
   const expressApp = app.getHttpAdapter().getInstance();
-
-  const reactBuildPath = path.join(__dirname, '..', 'client', 'dist'); // או 'build' לפי מצבך
+  const reactBuildPath = path.join(__dirname, '..', 'client', 'dist'); // שנה ל-'build' אם זה המצב שלך
 
   expressApp.use(express.static(reactBuildPath));
 

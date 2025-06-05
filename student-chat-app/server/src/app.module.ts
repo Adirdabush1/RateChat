@@ -29,7 +29,7 @@ export class MongoConnectionService implements OnModuleInit {
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: join(__dirname, '..', '.env'), 
+      envFilePath: join(__dirname, '..', '.env'),
     }),
     MongooseModule.forRoot(process.env.MONGODB_URI!),
     AuthModule,

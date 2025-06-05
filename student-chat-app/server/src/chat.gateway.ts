@@ -9,7 +9,7 @@ import { UsersService } from './users/users.service';
 
 @WebSocketGateway({
   cors: {
-    origin: ['http://localhost:5173', 'https://your-frontend-domain.onrender.com'],
+    origin: ['http://localhost:5173', 'https://ratechat2.onrender.com'],
     methods: ['GET', 'POST'],
     credentials: true,
   },
