@@ -7,9 +7,21 @@ import { analyzeMessageEnglish } from './service/analyzeMessage';
 import { MessagesService } from './messages/messages.service';
 import { UsersService } from './users/users.service';
 
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://ratechat2.onrender.com',
+  // הוסף כאן עוד דומיינים לפי הצורך
+];
+
 @WebSocketGateway({
   cors: {
-    origin: ['http://localhost:5173', 'https://ratechat2.onrender.com'],
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     methods: ['GET', 'POST'],
     credentials: true,
   },
