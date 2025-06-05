@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:3000';
+const API_URL = 'https://ratechat2.onrender.com';
 
 export const registerParent = async (data: {
   email: string;
