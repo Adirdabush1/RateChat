@@ -158,9 +158,9 @@ __decorate([
 exports.ChatGateway = ChatGateway = __decorate([
     (0, websockets_1.WebSocketGateway)({
         cors: {
-            origin: 'http://localhost:5173',
+            origin: ['http://localhost:5173', 'https://ratechat2.onrender.com'],
             methods: ['GET', 'POST'],
-        },
+        }
     }),
     __metadata("design:paramtypes", [messages_service_1.MessagesService,
         jwt_1.JwtService,
