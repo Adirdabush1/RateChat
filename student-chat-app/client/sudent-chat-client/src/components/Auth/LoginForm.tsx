@@ -15,7 +15,7 @@ export default function LoginForm() {
       localStorage.setItem('token', result.access_token);
       localStorage.setItem('user', JSON.stringify({ name: result.name, email }));
       setMessage('Logged in successfully!');
-      navigate('/chat');
+      navigate('/lobby');
     } catch (error: any) {
       setMessage(error.response?.data?.message || 'Login error');
     }
