@@ -80,7 +80,7 @@ export class AuthService {
   };
 }
 
-  // Parent login - returns JWT if credentials are correct
+  
   async loginParent(email: string, password: string) {
     const parent = await this.parentModel.findOne({ email });
     if (!parent) {
