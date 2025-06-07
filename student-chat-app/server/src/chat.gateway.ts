@@ -22,8 +22,7 @@ import { UsersService } from './users/users.service';
   cors: {
     origin: 
       '*',
-    methods: ['GET', 'POST'],
-    credentials: true, 
+    methods: ['GET', 'POST'], 
   },
 })
 
