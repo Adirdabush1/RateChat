@@ -46,10 +46,10 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ token, CHAT_ID }) => {
 
     setUsername(parsedUser.name);
 
-    // חשוב לשים כאן את הכתובת של השרת הרץ בענן (Render)
-    socketRef.current = io('https://ratechat-1.onrender.com', {
-      auth: { token, CHAT_ID },
-    });
+socketRef.current = io('https://ratechat-1.onrender.com', {
+  auth: { token, CHAT_ID },
+  transports: ['websocket'], 
+});
 
     socketRef.current.on('connect', () => {
       console.log('Connected to socket');
