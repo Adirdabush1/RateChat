@@ -1,7 +1,7 @@
 // src/App.tsx
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
-import Home from './components/pages/Home'; 
+import Home from './components/pages/Home'; // <-- הייבוא החדש
 
 import ChatLobby from './components/Chat/ChatLobby';
 import ChatWindow from './components/Chat/Chatwindow';

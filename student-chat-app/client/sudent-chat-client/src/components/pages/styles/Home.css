@@ -1,110 +1,84 @@
 /* Home.css */
-.login-page {
+.home-page {
   background-color: #080710;
   font-family: 'Poppins', sans-serif;
   min-height: 100vh;
   position: relative;
   overflow: hidden;
-}
-
-.login-page .login-background {
-  width: 430px;
-  height: 520px;
-  position: absolute;
-  transform: translate(-50%, -50%);
-  left: 50%;
-  top: 50%;
-  z-index: 0;
-}
-
-.login-page .shape {
-  height: 200px;
-  width: 200px;
-  position: absolute;
-  border-radius: 50%;
-}
-
-.login-page .shape:first-child {
-  background: linear-gradient(#1845ad, #23a2f6);
-  left: -80px;
-  top: -80px;
-}
-
-.login-page .shape:last-child {
-  background: linear-gradient(to right, #ff512f, #f09819);
-  right: -30px;
-  bottom: -80px;
-}
-
-.login-page .login-form-container {
-  height: auto;
-  width: 400px;
-  background-color: rgba(255, 255, 255, 0.13);
-  position: absolute;
-  transform: translate(-50%, -50%);
-  top: 50%;
-  left: 50%;
-  border-radius: 10px;
-  backdrop-filter: blur(10px);
-  border: 2px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 0 40px rgba(8, 7, 16, 0.6);
-  padding: 50px 35px;
-  z-index: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
   box-sizing: border-box;
 }
 
-.login-page .login-form-container h2 {
-  color: #fff;
-  font-size: 32px;
+.background-shape {
+  position: absolute;
+  border-radius: 50%;
+  z-index: 0;
+}
+
+.shape1 {
+  width: 200px;
+  height: 200px;
+  background: linear-gradient(#1845ad, #23a2f6);
+  top: -80px;
+  left: -80px;
+}
+
+.shape2 {
+  width: 200px;
+  height: 200px;
+  background: linear-gradient(to right, #ff512f, #f09819);
+  bottom: -80px;
+  right: -80px;
+}
+
+.home-container {
+  background-color: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  padding: 40px 30px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 30px rgba(8, 7, 16, 0.6);
+  z-index: 1;
+  width: 100%;
+  max-width: 420px;
   text-align: center;
+}
+
+.home-title {
+  color: #ffffff;
+  font-size: 28px;
   margin-bottom: 20px;
 }
 
-.login-page .extra-links {
-  margin-top: 20px;
-  text-align: center;
-  color: #fff;
-}
-
-.login-page .extra-links a {
-  color: #61dafb;
-  text-decoration: underline;
-}
-
-.login-page .register-button {
-  margin-top: 10px;
-  padding: 10px 20px;
-  background-color: #ffffff;
-  color: #080710;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.login-page button {
+.intro-video {
   width: 100%;
-  padding: 14px 0;
-  margin-top: 15px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  outline: none;
+}
+
+.button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.button-group button {
   background: linear-gradient(90deg, #23a2f6, #1845ad);
   border: none;
   border-radius: 8px;
   color: white;
-  font-size: 17px;
+  font-size: 16px;
   font-weight: 600;
+  padding: 12px;
   cursor: pointer;
-  transition: background 0.3s ease, box-shadow 0.3s ease;
-  box-shadow: 0 4px 15px rgba(35, 162, 246, 0.5);
-  box-sizing: border-box;
+  transition: background 0.3s ease, transform 0.2s ease;
 }
 
-.login-page button:hover {
+.button-group button:hover {
   background: linear-gradient(90deg, #1845ad, #23a2f6);
-  box-shadow: 0 6px 20px rgba(35, 162, 246, 0.7);
-}
-
-video {
-  width: 100%;
-  border-radius: 12px;
-  margin-bottom: 15px;
-  outline: none;
+  transform: scale(1.03);
 }
