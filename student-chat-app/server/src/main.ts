@@ -4,8 +4,22 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  // רק דומיין הפרודקשן מותר
+  const allowedOrigins = [
+    'https://ratechat2.onrender.com',
+  ];
+
   app.enableCors({
-    origin: 'http://localhost:5173',
+    origin: (origin, callback) => {
+      // לאפשר בקשות ללא origin (למשל Postman)
+      if (!origin) return callback(null, true);
+      // לאפשר רק לדומיין הפרודקשן
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     credentials: true,
   });
 
