@@ -12,8 +12,11 @@ const Home = () => {
       <div className="home-container">
         <h1 className="home-title">Welcome to RateChat</h1>
 
-        <video className="intro-video" controls src="student-chat-app/client/sudent-chat-client/public/video (1).mp4
-        " />
+        <video className="intro-video" controls>
+  <source src="/video.mp4" type="video/mp4" />
+  Your browser does not support the video tag.
+</video>
+
 
         <div className="button-group">
           <button onClick={() => navigate("/login")}>Student Login</button>
