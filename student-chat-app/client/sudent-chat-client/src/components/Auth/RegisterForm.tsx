@@ -15,7 +15,7 @@ export default function RegisterForm() {
       const result = await registerUser(email, password);
       setMessage('Registered successfully!');
       console.log(result); 
-      navigate('/chat'); // after student registration
+      navigate('/lobby');
     } catch (error: any) {
       setMessage(error.response?.data?.message || 'Registration error');
     }
