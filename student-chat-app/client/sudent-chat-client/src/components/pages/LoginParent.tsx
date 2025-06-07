@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './styles/Login.css';
 
@@ -17,6 +17,8 @@ const LoginParent: React.FC = () => {
     password: '',
   });
 
+  const navigate = useNavigate();
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -33,7 +35,7 @@ const LoginParent: React.FC = () => {
       localStorage.setItem('parentToken', token);
 
       alert('Logged in successfully!');
-      window.location.href = '/parent-dashboard';
+      navigate('/parent-dashboard');  // כאן השינוי
     } catch (error) {
       console.error('Login error:', error);
       alert('Incorrect login details or server error');

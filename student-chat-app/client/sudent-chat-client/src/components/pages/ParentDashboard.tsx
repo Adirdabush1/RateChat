@@ -27,6 +27,8 @@ const ParentDashboard: React.FC = () => {
       setError(null);
 
       const token = localStorage.getItem('parentToken');
+      console.log('Token from localStorage:', token);  // לוג הטוקן
+
       if (!token) throw new Error('No parent token found');
 
       const res = await axios.get<StudentData>('https://ratechat-1.onrender.com/parent/student-info', {
@@ -35,8 +37,11 @@ const ParentDashboard: React.FC = () => {
         },
       });
 
+      console.log('Student data from server:', res.data);  // לוג התגובה מהשרת
+
       setStudent(res.data);
     } catch (err: any) {
+      console.error('Error fetching student data:', err);  // לוג שגיאות
       setError(err.message || 'An error occurred while loading data. Please try again later.');
     } finally {
       setIsLoading(false);
@@ -49,7 +54,10 @@ const ParentDashboard: React.FC = () => {
 
   useEffect(() => {
     const token = localStorage.getItem('parentToken');
-    if (!token) return;
+    if (!token) {
+      console.log('No token found, skipping socket connection');
+      return;
+    }
 
     const socket = io('https://ratechat-1.onrender.com', {
       auth: { token },
@@ -58,9 +66,9 @@ const ParentDashboard: React.FC = () => {
     socketRef.current = socket;
 
     socket.on('connect', () => {
-      console.log('Connected to WebSocket server, registering parent');
-
+      console.log('Connected to WebSocket server');
       if (student?.name) {
+        console.log('Registering parent with name:', student.name);
         socket.emit('registerParent', student.name);
       }
     });
@@ -77,7 +85,7 @@ const ParentDashboard: React.FC = () => {
     return () => {
       socket.disconnect();
     };
-  }, [student?.name]);
+  }, []); // ללא תלות ב-student?.name
 
   if (isLoading) {
     return <div className="text-center mt-10 text-xl">⏳ Loading data...</div>;
