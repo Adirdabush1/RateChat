@@ -56,17 +56,29 @@ export class AuthService {
     };
   }
 
-  // Register a new parent user
   async registerParent(dto: RegisterParentDto) {
-    const hashed = await bcrypt.hash(dto.password, 10);
-    const parent = await this.parentModel.create({
-      name: dto.name,
-      email: dto.email,
-      password: hashed,
-      childEmail: dto.childEmail,
-    });
-    return parent;
+  const existingParent = await this.parentModel.findOne({ email: dto.email });
+  if (existingParent) {
+    throw new Error('Parent already exists');
   }
+
+  const hashed = await bcrypt.hash(dto.password, 10);
+  const parent = await this.parentModel.create({
+    name: dto.name,
+    email: dto.email,
+    password: hashed,
+    childEmail: dto.childEmail,
+  });
+
+  const payload = { email: parent.email, sub: parent._id, role: 'parent' };
+  const token = this.jwtService.sign(payload);
+
+  return {
+    message: 'Parent registered successfully',
+    access_token: token,
+    name: parent.name,
+  };
+}
 
   // Parent login - returns JWT if credentials are correct
   async loginParent(email: string, password: string) {
