@@ -17,10 +17,10 @@ export declare class AuthController {
         access_token: string;
         name: any;
     }>;
-    registerParent(body: RegisterParentDto): Promise<import("mongoose").Document<unknown, {}, import("../perent/parent.schema").Parent, {}> & import("../perent/parent.schema").Parent & Required<{
-        _id: unknown;
-    }> & {
-        __v: number;
+    registerParent(body: RegisterParentDto): Promise<{
+        message: string;
+        access_token: string;
+        name: string;
     }>;
     loginParent(body: {
         email: string;

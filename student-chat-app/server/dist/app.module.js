@@ -22,8 +22,8 @@ const messages_module_1 = require("./messages/messages.module");
 const auth_module_1 = require("./auth/auth.module");
 const users_module_1 = require("./users/users.module");
 const alerts_service_1 = require("./alerts/alerts.service");
-const chat_gateway_1 = require("./chat.gateway");
 const parent_module_1 = require("./perent/parent.module");
+const chat_module_1 = require("./chat.module");
 let MongoConnectionService = class MongoConnectionService {
     connection;
     constructor(connection) {
@@ -59,8 +59,9 @@ exports.AppModule = AppModule = __decorate([
             users_module_1.UsersModule,
             messages_module_1.MessagesModule,
             parent_module_1.ParentModule,
+            chat_module_1.ChatModule,
         ],
-        providers: [chat_gateway_1.ChatGateway, alerts_service_1.AlertsService, MongoConnectionService],
+        providers: [alerts_service_1.AlertsService, MongoConnectionService],
     })
 ], AppModule);
 //# sourceMappingURL=app.module.js.map
