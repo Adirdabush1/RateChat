@@ -20,10 +20,13 @@ import { UsersService } from './users/users.service';
 
 @WebSocketGateway({
   cors: {
-    origin: 'http://localhost:517־https://ratechat2.onrender.com3',
+    origin: 
+      'https://ratechat2.onrender.com',
     methods: ['GET', 'POST'],
+    credentials: true, 
   },
 })
+
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, OnModuleInit {
   @WebSocketServer()
   server: Server;
