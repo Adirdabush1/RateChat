@@ -14,22 +14,25 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ParentController = void 0;
 const common_1 = require("@nestjs/common");
+const jwt_auth_guard_1 = require("../auth/jwt-auth.guard");
 const perent_service_1 = require("./perent.service");
 let ParentController = class ParentController {
     parentService;
     constructor(parentService) {
         this.parentService = parentService;
     }
-    async getStudentInfo(parentEmail) {
+    async getStudentInfo(req) {
+        const parentEmail = req.user.email;
         return this.parentService.getStudentInfo(parentEmail);
     }
 };
 exports.ParentController = ParentController;
 __decorate([
     (0, common_1.Get)('student-info'),
-    __param(0, (0, common_1.Query)('parentEmail')),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    __param(0, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], ParentController.prototype, "getStudentInfo", null);
 exports.ParentController = ParentController = __decorate([
