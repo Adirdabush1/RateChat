@@ -12,7 +12,8 @@ const Home = () => {
       <div className="home-container">
         <h1 className="home-title">Welcome to RateChat</h1>
 
-        <video className="intro-video" controls src="/video.mp4" />
+        <video className="intro-video" controls src="student-chat-app/client/sudent-chat-client/public/video (1).mp4
+        " />
 
         <div className="button-group">
           <button onClick={() => navigate("/login")}>Student Login</button>
