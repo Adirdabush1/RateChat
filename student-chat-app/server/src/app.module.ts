@@ -3,12 +3,13 @@ import { ConfigModule } from '@nestjs/config';
 import { MongooseModule, InjectConnection } from '@nestjs/mongoose';
 import { Connection } from 'mongoose';
 import { join } from 'path';
+
 import { MessagesModule } from './messages/messages.module';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { AlertsService } from './alerts/alerts.service';
-import { ChatGateway } from './chat.gateway';
 import { ParentModule } from './perent/parent.module';
+import { ChatModule } from './chat.module';  
 
 @Injectable()
 export class MongoConnectionService implements OnModuleInit {
@@ -36,7 +37,8 @@ export class MongoConnectionService implements OnModuleInit {
     UsersModule,
     MessagesModule,
     ParentModule,
+    ChatModule,  
   ],
-  providers: [ChatGateway, AlertsService, MongoConnectionService],
+  providers: [AlertsService, MongoConnectionService],  
 })
 export class AppModule {}
