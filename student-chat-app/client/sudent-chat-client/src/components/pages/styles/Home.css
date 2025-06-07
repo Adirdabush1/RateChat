@@ -1,0 +1,110 @@
+/* Home.css */
+.login-page {
+  background-color: #080710;
+  font-family: 'Poppins', sans-serif;
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+
+.login-page .login-background {
+  width: 430px;
+  height: 520px;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  left: 50%;
+  top: 50%;
+  z-index: 0;
+}
+
+.login-page .shape {
+  height: 200px;
+  width: 200px;
+  position: absolute;
+  border-radius: 50%;
+}
+
+.login-page .shape:first-child {
+  background: linear-gradient(#1845ad, #23a2f6);
+  left: -80px;
+  top: -80px;
+}
+
+.login-page .shape:last-child {
+  background: linear-gradient(to right, #ff512f, #f09819);
+  right: -30px;
+  bottom: -80px;
+}
+
+.login-page .login-form-container {
+  height: auto;
+  width: 400px;
+  background-color: rgba(255, 255, 255, 0.13);
+  position: absolute;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+  border-radius: 10px;
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 40px rgba(8, 7, 16, 0.6);
+  padding: 50px 35px;
+  z-index: 1;
+  box-sizing: border-box;
+}
+
+.login-page .login-form-container h2 {
+  color: #fff;
+  font-size: 32px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.login-page .extra-links {
+  margin-top: 20px;
+  text-align: center;
+  color: #fff;
+}
+
+.login-page .extra-links a {
+  color: #61dafb;
+  text-decoration: underline;
+}
+
+.login-page .register-button {
+  margin-top: 10px;
+  padding: 10px 20px;
+  background-color: #ffffff;
+  color: #080710;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.login-page button {
+  width: 100%;
+  padding: 14px 0;
+  margin-top: 15px;
+  background: linear-gradient(90deg, #23a2f6, #1845ad);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 15px rgba(35, 162, 246, 0.5);
+  box-sizing: border-box;
+}
+
+.login-page button:hover {
+  background: linear-gradient(90deg, #1845ad, #23a2f6);
+  box-shadow: 0 6px 20px rgba(35, 162, 246, 0.7);
+}
+
+video {
+  width: 100%;
+  border-radius: 12px;
+  margin-bottom: 15px;
+  outline: none;
+}
