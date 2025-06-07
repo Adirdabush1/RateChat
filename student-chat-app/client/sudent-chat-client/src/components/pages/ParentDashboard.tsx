@@ -26,18 +26,21 @@ const ParentDashboard: React.FC = () => {
       setIsLoading(true);
       setError(null);
 
-      const token = localStorage.getItem('parentToken');
-      console.log('Token from localStorage:', token);  // לוג הטוקן
+     const token = localStorage.getItem('parentToken');
+if (!token) throw new Error('No parent token found');
 
-      if (!token) throw new Error('No parent token found');
+// נניח שה-email מקודד בתוך ה-token או שמרת אותו בלוקאל-סטורג'
+const parentEmail = localStorage.getItem('parentEmail');
 
-      const res = await axios.get<StudentData>('https://ratechat-1.onrender.com/parent/student-info', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      console.log('Student data from server:', res.data);  // לוג התגובה מהשרת
+const res = await axios.get<StudentData>(
+  `https://ratechat-1.onrender.com/parent/student-info?parentEmail=${parentEmail}`,
+  {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  }
+);
+      console.log('Student data from server:', res.data);  
 
       setStudent(res.data);
     } catch (err: any) {
