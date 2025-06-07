@@ -1,4 +1,5 @@
-const API_URL = 'https://ratechat2.onrender.com';
+const API_URL = 'https://ratechat-1.onrender.com'; 
+
 
 export const registerParent = async (data: {
   email: string;
