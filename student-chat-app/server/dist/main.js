@@ -4,8 +4,20 @@ const core_1 = require("@nestjs/core");
 const app_module_1 = require("./app.module");
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
+    const allowedOrigins = [
+        'https://ratechat2.onrender.com',
+    ];
     app.enableCors({
-        origin: 'http://localhost:5173',
+        origin: (origin, callback) => {
+            if (!origin)
+                return callback(null, true);
+            if (allowedOrigins.includes(origin)) {
+                callback(null, true);
+            }
+            else {
+                callback(new Error('Not allowed by CORS'));
+            }
+        },
         credentials: true,
     });
     const port = process.env.PORT || 3000;
