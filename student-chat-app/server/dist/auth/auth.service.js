@@ -60,6 +60,10 @@ let AuthService = class AuthService {
         };
     }
     async registerParent(dto) {
+        const existingParent = await this.parentModel.findOne({ email: dto.email });
+        if (existingParent) {
+            throw new Error('Parent already exists');
+        }
         const hashed = await bcrypt.hash(dto.password, 10);
         const parent = await this.parentModel.create({
             name: dto.name,
@@ -67,7 +71,13 @@ let AuthService = class AuthService {
             password: hashed,
             childEmail: dto.childEmail,
         });
-        return parent;
+        const payload = { email: parent.email, sub: parent._id, role: 'parent' };
+        const token = this.jwtService.sign(payload);
+        return {
+            message: 'Parent registered successfully',
+            access_token: token,
+            name: parent.name,
+        };
     }
     async loginParent(email, password) {
         const parent = await this.parentModel.findOne({ email });

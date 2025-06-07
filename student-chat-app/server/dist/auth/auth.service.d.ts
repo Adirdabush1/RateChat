@@ -17,10 +17,10 @@ export declare class AuthService {
         access_token: string;
         name: any;
     }>;
-    registerParent(dto: RegisterParentDto): Promise<import("mongoose").Document<unknown, {}, Parent, {}> & Parent & Required<{
-        _id: unknown;
-    }> & {
-        __v: number;
+    registerParent(dto: RegisterParentDto): Promise<{
+        message: string;
+        access_token: string;
+        name: string;
     }>;
     loginParent(email: string, password: string): Promise<{
         access_token: string;
