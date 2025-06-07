@@ -37,7 +37,7 @@ export default function ChatPage() {
 
     const CHAT_ID = 'main_chat_room';
 
-    socket = io('http://localhost:3000', {
+    socket = io('https://ratechat-1.onrender.com', {
       auth: {
         token,
         CHAT_ID: CHAT_ID,

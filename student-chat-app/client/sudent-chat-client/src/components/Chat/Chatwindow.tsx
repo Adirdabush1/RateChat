@@ -47,7 +47,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ token, CHAT_ID }) => {
 
     setUsername(parsedUser.name);
 
-    socketRef.current = io('http://localhost:3000', {
+    socketRef.current = io('https://ratechat-1.onrender.com', {
       auth: { token, CHAT_ID },
     });
 
