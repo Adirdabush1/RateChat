@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import "../styles/Home.css"; // תוודא שקובץ ה-CSS נמצא שם
+import "./styles/Home.css"; 
 
 const Home = () => {
   const navigate = useNavigate();
