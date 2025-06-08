@@ -7,7 +7,9 @@ export type MessageDocument = Message & Document;
 export class Message {
   @Prop({ required: true })
   sender: string;
+@Prop()
 text: string;
+
   @Prop({ required: true })
   message: string;
 
@@ -20,7 +22,7 @@ text: string;
   @Prop({ required: false, default: 0 })
   score: number;
 
-  // שדות חסרים:
+
   @Prop({ required: false })
   mood: string;
 
@@ -30,8 +32,8 @@ text: string;
   @Prop({ required: false })
   content: string;
 
-  @Prop({ required: false })
-  chatId: string;
+
+ 
 }
 
 export const MessageSchema = SchemaFactory.createForClass(Message);

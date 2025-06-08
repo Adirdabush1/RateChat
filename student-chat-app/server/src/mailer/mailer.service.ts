@@ -4,8 +4,8 @@ export class MailerService {
   private transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: 'your_email@gmail.com', // Enter your email address
-      pass: 'your_app_password'     // App password (not the regular password)
+      user: 'adiraws2025@gmail.com', // Enter your email address
+      pass: 'iejp ogqq qvhb odpl'
     }
   });
 
