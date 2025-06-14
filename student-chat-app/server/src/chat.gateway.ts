@@ -7,22 +7,17 @@ import { analyzeMessageEnglish } from './service/analyzeMessage';
 import { MessagesService } from './messages/messages.service';
 import { UsersService } from './users/users.service';
 
-const allowedOrigins = [
-  'http://localhost:5173',
-  'https://ratechat2.onrender.com',
-  // הוסף כאן עוד דומיינים לפי הצורך
-];
-
 @WebSocketGateway({
- cors: {
-  origin: [
-    'http://localhost:5173',
-    'https://ratechat-1.onrender.com',
-    'https://ratechat2.onrender.com',
-  ],
-  methods: ['GET', 'POST'],
-  credentials: true,
-},
+  cors: {
+    origin: [
+      'http://localhost:5173',
+      'https://ratechat-1.onrender.com',
+      'https://ratechat2.onrender.com',
+      // הוסף כאן עוד דומיינים לפי הצורך
+    ],
+    methods: ['GET', 'POST'],
+    credentials: true,
+  },
 })
 export class ChatGateway {
   @WebSocketServer()
