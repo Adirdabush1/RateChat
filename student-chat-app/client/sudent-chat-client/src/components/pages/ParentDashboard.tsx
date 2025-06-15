@@ -29,7 +29,7 @@ const ParentDashboard: React.FC = () => {
       const token = localStorage.getItem('parentToken');
       if (!token) throw new Error('No parent token found');
 
-      const res = await axios.get<StudentData>('http://localhost:3000/parent/student-info', {
+      const res = await axios.get<StudentData>('https://ratechat-1.onrender.com/parent/student-info', {
         headers: {
           Authorization: `Bearer ${token}`,
         },

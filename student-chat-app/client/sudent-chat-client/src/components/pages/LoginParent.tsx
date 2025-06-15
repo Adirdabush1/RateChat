@@ -25,7 +25,7 @@ const LoginParent: React.FC = () => {
     e.preventDefault();
     try {
       const response = await axios.post<ParentLoginResponse>(
-        'http://localhost:3000/auth/login-parent',
+        'https://ratechat-1.onrender.com/auth/login-parent',
         formData
       );
 
