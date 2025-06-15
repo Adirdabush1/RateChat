@@ -1,20 +1,19 @@
+// src/pages/LoginParent.tsx
+
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './styles/Login.css';
+import { setToken } from '../utils/token';
 
-interface ParentLoginResponse {
+interface LoginResponse {
   token: string;
-  parent: {
-    name: string;
-    id: string;
-  };
 }
 
 const LoginParent: React.FC = () => {
   const [formData, setFormData] = useState({
     email: '',
-    password: '',
+    studentName: '',
   });
 
   const navigate = useNavigate();
@@ -26,19 +25,23 @@ const LoginParent: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await axios.post<ParentLoginResponse>(
-        'https://ratechat-1.onrender.com/auth/login-parent',
-        formData
+      const res = await axios.post<LoginResponse>(
+        'https://ratechat-1.onrender.com/parent/login',
+        {
+          email: formData.email,
+          studentName: formData.studentName,
+        }
       );
 
-      const token = response.data.token;
-      localStorage.setItem('parentToken', token);
+      const { token } = res.data;
+      setToken(token, 'parent');
+      localStorage.setItem('parentEmail', formData.email);
 
-      alert('Logged in successfully!');
-      navigate('/parent-dashboard');  // כאן השינוי
+      alert('התחברת בהצלחה כהורה!');
+      navigate('/parent-dashboard');
     } catch (error) {
       console.error('Login error:', error);
-      alert('Incorrect login details or server error');
+      alert('שגיאה בהתחברות. ודא פרטים נכונים או נסה שוב מאוחר יותר.');
     }
   };
 
@@ -50,30 +53,30 @@ const LoginParent: React.FC = () => {
       </div>
 
       <form onSubmit={handleSubmit} className="login-form-container">
-        <h2>Parent Login</h2>
+        <h2>התחברות הורה</h2>
 
         <input
           type="email"
           name="email"
-          placeholder="Email"
+          placeholder="אימייל"
           value={formData.email}
           onChange={handleChange}
           required
         />
 
         <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={formData.password}
+          type="text"
+          name="studentName"
+          placeholder="שם התלמיד"
+          value={formData.studentName}
           onChange={handleChange}
           required
         />
 
-        <button type="submit">Login as Parent</button>
+        <button type="submit">התחבר כהורה</button>
 
         <div className="extra-links">
-          <Link to="/register-parent">Don't have an account? Click here to register</Link>
+          <Link to="/register-parent">אין לך חשבון? לחץ כאן להרשמה</Link>
         </div>
       </form>
     </div>

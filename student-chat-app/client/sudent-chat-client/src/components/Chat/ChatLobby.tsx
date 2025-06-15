@@ -1,6 +1,8 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import '../pages/styles/chatLobby.css'; 
+// src/pages/ChatLobby.tsx
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { getToken } from '../utils/token';
+import './styles/chatLobby.css';
 
 export default function ChatLobby() {
   const [groups, setGroups] = useState<string[]>([]);
@@ -8,7 +10,7 @@ export default function ChatLobby() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = getToken();
     if (!token) {
       alert('You must log in first');
       navigate('/login');
@@ -17,11 +19,9 @@ export default function ChatLobby() {
 
     try {
       const savedGroups = JSON.parse(localStorage.getItem('chatGroups') || '[]');
-
       const validGroups = Array.isArray(savedGroups)
         ? savedGroups.filter(group => typeof group === 'string')
         : [];
-
       setGroups(validGroups);
     } catch (err) {
       console.error('Error reading chatGroups from localStorage', err);
@@ -34,7 +34,6 @@ export default function ChatLobby() {
 
     const cleanedName = newGroup.trim();
     const updatedGroups = [...groups, cleanedName];
-
     const uniqueGroups = Array.from(new Set(updatedGroups));
 
     setGroups(uniqueGroups);

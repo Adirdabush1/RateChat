@@ -1,8 +1,8 @@
-// src/components/Chat/Chatwindow.tsx
 import React, { useEffect, useRef, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { io, Socket } from 'socket.io-client';
 import '../pages/styles/chatwindow.css';
+import { getToken, getUser } from '../../components/utils/token';
 
 type ChatMessage = {
   message: string;
@@ -26,26 +26,15 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ token, CHAT_ID }) => {
   const previousGroupRef = useRef<string | null>(null);
 
   useEffect(() => {
-    const userData = localStorage.getItem('user');
+    const user = getUser();
 
-    if (!token || !userData) {
+    if (!token || !user) {
       alert('You must log in first');
       navigate('/login');
       return;
     }
 
-    let parsedUser;
-    try {
-      parsedUser = JSON.parse(userData);
-    } catch {
-      alert('An error occurred while loading user data');
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      navigate('/login');
-      return;
-    }
-
-    setUsername(parsedUser.name);
+    setUsername(user.name);
 
     socketRef.current = io('https://ratechat-1.onrender.com', {
       auth: { token, CHAT_ID },
@@ -138,7 +127,9 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ token, CHAT_ID }) => {
 
   const handleLogout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('parentToken');
     localStorage.removeItem('user');
+    localStorage.removeItem('parent');
     navigate('/login');
   };
 
@@ -199,7 +190,7 @@ const ChatWindow: React.FC = () => {
   const { groupName } = useParams<{ groupName: string }>();
   const navigate = useNavigate();
 
-  const token = localStorage.getItem('token') || '';
+  const token = getToken();
 
   useEffect(() => {
     if (!token) {

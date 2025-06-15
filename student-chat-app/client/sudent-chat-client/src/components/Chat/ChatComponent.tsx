@@ -1,16 +1,17 @@
 // src/components/ChatComponent.tsx
 import React, { useEffect, useState } from 'react';
 import { connectSocket, disconnectSocket, getSocket } from '../utils/socket';
+import { getToken } from '../utils/token';
 
 type Props = {
-  token: string;
   CHAT_ID: string;
 };
 
-const ChatComponent: React.FC<Props> = ({ token, CHAT_ID }) => {
+const ChatComponent: React.FC<Props> = ({ CHAT_ID }) => {
   const [messages, setMessages] = useState<{ sender: string; message: string }[]>([]);
 
   useEffect(() => {
+    const token = getToken();
     if (!token || !CHAT_ID) return;
 
     const socket = connectSocket(token, CHAT_ID);
@@ -36,9 +37,8 @@ const ChatComponent: React.FC<Props> = ({ token, CHAT_ID }) => {
     return () => {
       disconnectSocket();
     };
-  }, [token, CHAT_ID]);
+  }, [CHAT_ID]);
 
-  // Function to send a message
   const sendMessage = (text: string) => {
     const socket = getSocket();
     if (!socket) {

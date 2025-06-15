@@ -1,46 +1,40 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { io, Socket } from "socket.io-client";
+import { getToken, getUser } from '../utils/token';
+
+type ChatMessage = {
+  message: string;
+  sender: string;
+};
 
 let socket: Socket;
 
 export default function ChatPage() {
   const [message, setMessage] = useState('');
   const [username, setUsername] = useState('');
-  const [chat, setChat] = useState<{ message: string; sender: string }[]>([]);
+  const [chat, setChat] = useState<ChatMessage[]>([]);
   const chatBoxRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const userJson = localStorage.getItem('user');
-    const token = localStorage.getItem('token');
+    const user = getUser();
+    const token = getToken();
 
-    if (!userJson || !token) {
+    if (!user || !token) {
       alert('You must log in first');
       navigate('/login');
       return;
     }
 
-    try {
-      const user = JSON.parse(userJson);
-      if (!user || !user.name) {
-        alert('Invalid user data');
-        navigate('/login');
-        return;
-      }
-      setUsername(user.name);
-    } catch (error) {
-      alert('Invalid user data');
-      navigate('/login');
-      return;
-    }
+    setUsername(user.name);
 
     const CHAT_ID = 'main_chat_room';
 
     socket = io('https://ratechat-1.onrender.com', {
       auth: {
         token,
-        CHAT_ID: CHAT_ID,
+        CHAT_ID,
       },
     });
 
@@ -48,11 +42,11 @@ export default function ChatPage() {
       console.log('Connected to socket');
     });
 
-    socket.on('receive_message', (data) => {
+    socket.on('receive_message', (data: ChatMessage) => {
       setChat(prev => [...prev, data]);
     });
 
-    socket.on('chat_history', (messages) => {
+    socket.on('chat_history', (messages: ChatMessage[]) => {
       setChat(messages);
     });
 
@@ -75,7 +69,9 @@ export default function ChatPage() {
 
   const handleLogout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('parentToken');
     localStorage.removeItem('user');
+    localStorage.removeItem('parent');
     navigate('/login');
   };
 

@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import { io, Socket } from 'socket.io-client';
+import { getToken } from '../utils/token';
 
 interface Message {
   content: string;
@@ -18,7 +19,6 @@ const ParentDashboard: React.FC = () => {
   const [student, setStudent] = useState<StudentData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
   const socketRef = useRef<Socket | null>(null);
 
   const fetchStudentData = async () => {
@@ -26,25 +26,24 @@ const ParentDashboard: React.FC = () => {
       setIsLoading(true);
       setError(null);
 
-     const token = localStorage.getItem('parentToken');
-if (!token) throw new Error('No parent token found');
+      const token = getToken();
+      if (!token) throw new Error('No parent token found');
 
-// נניח שה-email מקודד בתוך ה-token או שמרת אותו בלוקאל-סטורג'
-const parentEmail = localStorage.getItem('parentEmail');
+      const parentEmail = localStorage.getItem('parentEmail');
 
-const res = await axios.get<StudentData>(
-  `https://ratechat-1.onrender.com/parent/student-info?parentEmail=${parentEmail}`,
-  {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  }
-);
-      console.log('Student data from server:', res.data);  
+      const res = await axios.get<StudentData>(
+        `https://ratechat-1.onrender.com/parent/student-info?parentEmail=${parentEmail}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
+      console.log('Student data from server:', res.data);
       setStudent(res.data);
     } catch (err: any) {
-      console.error('Error fetching student data:', err);  // לוג שגיאות
+      console.error('Error fetching student data:', err);
       setError(err.message || 'An error occurred while loading data. Please try again later.');
     } finally {
       setIsLoading(false);
@@ -56,7 +55,7 @@ const res = await axios.get<StudentData>(
   }, []);
 
   useEffect(() => {
-    const token = localStorage.getItem('parentToken');
+    const token = getToken();
     if (!token) {
       console.log('No token found, skipping socket connection');
       return;
@@ -88,7 +87,7 @@ const res = await axios.get<StudentData>(
     return () => {
       socket.disconnect();
     };
-  }, []); // ללא תלות ב-student?.name
+  }, []);
 
   if (isLoading) {
     return <div className="text-center mt-10 text-xl">⏳ Loading data...</div>;
