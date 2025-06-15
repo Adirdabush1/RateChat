@@ -5,7 +5,11 @@ import { IoAdapter } from '@nestjs/platform-socket.io';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  const allowedOrigins = ['https://ratechat-front.herokuapp.com'];
+  const allowedOrigins = [
+    'https://ratechat-f72a4557d4ab.herokuapp.com',
+    'https://ratechat-front.herokuapp.com',
+    'http://localhost:3000', // אופציונלי לפיתוח מקומי
+  ];
 
   app.enableCors({
     origin: (origin, callback) => {
@@ -19,7 +23,6 @@ async function bootstrap() {
     credentials: true,
   });
 
-  
   app.useWebSocketAdapter(new IoAdapter(app));
 
   const port = process.env.PORT || 3000;
