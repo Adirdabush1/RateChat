@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getToken } from '../utils/token';
-import './styles/chatLobby.css';
+import "../pages/styles/chatLobby.css";
 
 export default function ChatLobby() {
   const [groups, setGroups] = useState<string[]>([]);
