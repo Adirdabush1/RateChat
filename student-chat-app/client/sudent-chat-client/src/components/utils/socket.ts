@@ -4,7 +4,7 @@ let socket: Socket | null = null;
 
 export const connectSocket = (token: string, chatId: string) => {
     console.log('Connecting socket with:', { token, chatId });
-  socket = io('https://ratechat-1.onrender.com', {
+  socket = io('https://ratechat-f72a4557d4ab.herokuapp.com', {
       transports: ['websocket'], 
     auth: {
       token,

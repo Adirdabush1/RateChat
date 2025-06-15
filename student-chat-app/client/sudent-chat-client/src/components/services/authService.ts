@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'https://ratechat2.onrender.com'; 
+const API_URL = 'https://ratechat-f72a4557d4ab.herokuapp.com'; 
 
 export const registerUser = async (email: string, password: string) => {
   const response = await axios.post(`${API_URL}/register`, { email, password });

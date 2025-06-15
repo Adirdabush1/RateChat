@@ -36,7 +36,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ token, chatId }) => {
 
     setUsername(user.name);
 
-    socketRef.current = io('https://ratechat-1.onrender.com', {
+    socketRef.current = io('https://ratechat-f72a4557d4ab.herokuapp.com', {
       auth: { token, chatId },
     });
 

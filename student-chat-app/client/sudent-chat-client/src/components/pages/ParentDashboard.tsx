@@ -32,7 +32,7 @@ const ParentDashboard: React.FC = () => {
       const parentEmail = localStorage.getItem('parentEmail');
 
       const res = await axios.get<StudentData>(
-        `https://ratechat-1.onrender.com/parent/student-info?parentEmail=${parentEmail}`,
+        `https://ratechat-f72a4557d4ab.herokuapp.com/parent/student-info?parentEmail=${parentEmail}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -61,7 +61,7 @@ const ParentDashboard: React.FC = () => {
       return;
     }
 
-    const socket = io('https://ratechat-1.onrender.com', {
+    const socket = io('https://ratechat-f72a4557d4ab.herokuapp.com', {
       auth: { token },
     });
 

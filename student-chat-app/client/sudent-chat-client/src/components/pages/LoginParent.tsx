@@ -26,7 +26,7 @@ const LoginParent: React.FC = () => {
     e.preventDefault();
     try {
       const res = await axios.post<LoginResponse>(
-        'https://ratechat-1.onrender.com/parent/login',
+        'https://ratechat-f72a4557d4ab.herokuapp.com/parent/login',
         {
           email: formData.email,
           studentName: formData.studentName,

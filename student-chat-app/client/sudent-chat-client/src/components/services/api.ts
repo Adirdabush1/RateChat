@@ -1,4 +1,4 @@
-const API_URL = 'https://ratechat-1.onrender.com'; 
+const API_URL = 'https://ratechat-f72a4557d4ab.herokuapp.com'; 
 
 
 export const registerParent = async (data: {
