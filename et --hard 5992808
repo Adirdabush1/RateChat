@@ -1,0 +1,50 @@
+[33m38783db[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m)[m Add video.mp4 as a normal file
+[33meeea3fe[m Remove large file from LFS and track as normal file
+[33m0f2f203[m Fix folder name typo from sudent to student
+[33m5992808[m Fix JSX errors and install missing packages
+[33mf7bba57[m Save local changes before pull
+[33m52dc50a[m Deploy frontend
+[33m5644225[m delete chat page
+[33md3496ff[m chatId name
+[33m07361dc[m ttt
+[33m46988c0[m soket fix
+[33m64b40a6[m new css
+[33me6c3ace[m tey token
+[33mc7c3ce1[m blabla
+[33m7faacfb[m new video
+[33m8515aa5[m passwords
+[33m2146c74[m ajklnk
+[33m3f8fd7e[m akjs
+[33m0e22d47[m aksjh
+[33m95cd1bd[m aljnf
+[33m157a91b[m asdaaa
+[33mcda8633[m alskd
+[33m49dc827[m alsknd
+[33m9c2287c[m goksasf
+[33m3f57517[m goks
+[33m6a56b45[m ssa
+[33mc92f862[m hash
+[33mbb56bdb[m orgin
+[33m44e9430[m login path
+[33m869b38e[m new css home
+[33mc921812[m new css
+[33m68cba25[m new vidoe
+[33m6f6235f[m Track video.mp4 with LFS
+[33mf621602[m new path
+[33m200ae3d[m video
+[33m6a02d55[m url
+[33ma8cb843[m api adress
+[33m67afa7f[m try
+[33mca08a01[m env
+[33m67515b7[m add render
+[33mc2deb62[m force add dist folder
+[33mf317eff[m add dist
+[33me96a71b[m translate
+[33m8cff1fe[m agent
+[33m6d31843[m add AI
+[33m71d7d15[m style rgister
+[33m3bb9e9d[m שיניתי את analyzeMessage.ts
+[33m45dd468[m css
+[33m87c9b57[m Add sign-in button and redirect after register
+[33m2f518f7[m Initial commit
+[33m0196e75[m[33m ([m[1;31mheroku/master[m[33m, [m[1;31mheroku/HEAD[m[33m)[m deploy server to heroku
