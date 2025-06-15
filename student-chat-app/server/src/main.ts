@@ -5,7 +5,7 @@ import { IoAdapter } from '@nestjs/platform-socket.io';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  const allowedOrigins = ['https://ratechat2.onrender.com'];
+  const allowedOrigins = ['https://ratechat-f72a4557d4ab.herokuapp.com'];
 
   app.enableCors({
     origin: (origin, callback) => {

@@ -20,7 +20,7 @@ import { UsersService } from './users/users.service';
 
 @WebSocketGateway({
   cors: {
-    origin: 'https://ratechat2.onrender.com',
+    origin: 'https://ratechat-f72a4557d4ab.herokuapp.com',
     methods: ['GET', 'POST'], 
   },
 })
