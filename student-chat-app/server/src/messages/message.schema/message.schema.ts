@@ -14,7 +14,7 @@ text: string;
   message: string;
 
   @Prop({ required: true })
-  CHAT_ID: string;
+  chatId: string;
 
   @Prop({ default: Date.now })
   createdAt: Date;

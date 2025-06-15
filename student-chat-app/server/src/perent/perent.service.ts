@@ -38,9 +38,9 @@ export class ParentService {
       flaggedMessages,
     };
   }
-  async handleNewMessage(sender: string, message: string, CHAT_ID: string, score: number) {
+  async handleNewMessage(sender: string, message: string, chatId: string, score: number) {
   
-  const savedMessage = await this.messagesService.saveMessage(sender, message, CHAT_ID, score);
+  const savedMessage = await this.messagesService.saveMessage(sender, message, chatId, score);
 
   
   if (score < 50) {

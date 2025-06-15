@@ -15,7 +15,7 @@ let Message = class Message {
     sender;
     text;
     message;
-    CHAT_ID;
+    chatId;
     createdAt;
     score;
     mood;
@@ -35,7 +35,7 @@ __decorate([
 __decorate([
     (0, mongoose_1.Prop)({ required: true }),
     __metadata("design:type", String)
-], Message.prototype, "CHAT_ID", void 0);
+], Message.prototype, "chatId", void 0);
 __decorate([
     (0, mongoose_1.Prop)({ default: Date.now }),
     __metadata("design:type", Date)

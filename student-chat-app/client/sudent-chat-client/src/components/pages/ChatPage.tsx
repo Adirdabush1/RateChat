@@ -29,12 +29,12 @@ export default function ChatPage() {
 
     setUsername(user.name);
 
-    const CHAT_ID = 'main_chat_room';
+    const chatId = 'main_chat_room';
 
     socket = io('https://ratechat-1.onrender.com', {
       auth: {
         token,
-        CHAT_ID,
+        chatId,
       },
     });
 

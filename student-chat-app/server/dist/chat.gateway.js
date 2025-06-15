@@ -39,19 +39,19 @@ let ChatGateway = class ChatGateway {
     async handleConnection(client) {
         try {
             const token = client.handshake.auth.token;
-            const CHAT_ID = client.handshake.auth.CHAT_ID;
+            const chatId = client.handshake.auth.chatId;
             this.logger.log(`handleConnection - received token: ${token}`);
-            this.logger.log(`handleConnection - received CHAT_ID: ${CHAT_ID}`);
+            this.logger.log(`handleConnection - received chatId: ${chatId}`);
             const payload = this.jwtService.verify(token);
             client.data.user = payload;
-            client.data.CHAT_ID = CHAT_ID;
-            client.join(CHAT_ID);
-            this.logger.log(`Client connected: ${payload.email} to chat ${CHAT_ID}`);
-            const history = await this.messagesService.getMessagesByChat(CHAT_ID);
+            client.data.chatId = chatId;
+            client.join(chatId);
+            this.logger.log(`Client connected: ${payload.email} to chat ${chatId}`);
+            const history = await this.messagesService.getMessagesByChat(chatId);
             client.emit('chat_history', history);
-            this.server.to(CHAT_ID).emit('receive_message', {
+            this.server.to(chatId).emit('receive_message', {
                 sender: 'System',
-                message: `${payload.email} joined chat ${CHAT_ID}`,
+                message: `${payload.email} joined chat ${chatId}`,
             });
         }
         catch (err) {
@@ -61,16 +61,16 @@ let ChatGateway = class ChatGateway {
     }
     handleDisconnect(client) {
         const email = client.data.user?.email || client.id;
-        const CHAT_ID = client.data.CHAT_ID || 'unknown chat';
-        this.logger.log(`Client disconnected: ${email} from chat ${CHAT_ID}`);
+        const chatId = client.data.chatId || 'unknown chat';
+        this.logger.log(`Client disconnected: ${email} from chat ${chatId}`);
         if (this.parentSockets.has(email)) {
             this.parentSockets.delete(email);
             this.logger.log(`Removed parent socket for ${email}`);
         }
-        this.server.to(CHAT_ID).emit('receive_message', {
+        this.server.to(chatId).emit('receive_message', {
             sender: 'System',
             message: `${email} disconnected from chat`,
-            CHAT_ID,
+            chatId,
         });
     }
     handleRegisterParent(parentEmail, client) {
@@ -79,9 +79,9 @@ let ChatGateway = class ChatGateway {
     }
     async onSendMessage(data, client) {
         const user = client.data.user;
-        const CHAT_ID = client.data.CHAT_ID;
-        if (!user || !CHAT_ID) {
-            this.logger.warn('Unauthorized user or missing CHAT_ID tried to send message');
+        const chatId = client.data.chatId;
+        if (!user || !chatId) {
+            this.logger.warn('Unauthorized user or missing chatId tried to send message');
             return;
         }
         try {
@@ -93,12 +93,12 @@ let ChatGateway = class ChatGateway {
             }
             const score = typeof analysis.score === 'number' ? analysis.score : 0;
             const scoreChange = typeof analysis.scoreChange === 'number' ? analysis.scoreChange : 0;
-            const saved = await this.messagesService.saveMessage(user.email, data.message, CHAT_ID, score);
-            this.server.to(CHAT_ID).emit('receive_message', {
+            const saved = await this.messagesService.saveMessage(user.email, data.message, chatId, score);
+            this.server.to(chatId).emit('receive_message', {
                 sender: saved.sender,
                 message: saved.message,
                 score,
-                CHAT_ID,
+                chatId,
             });
             if (analysis.alertParent) {
                 this.logger.warn(`Alert for parent! Reason: ${analysis.reason}`);
@@ -106,7 +106,7 @@ let ChatGateway = class ChatGateway {
                     await axios_1.default.post('https://your-api-url.com/alert', {
                         studentEmail: user.email,
                         message: data.message,
-                        chatId: CHAT_ID,
+                        chatId: chatId,
                         reason: analysis.reason,
                         timestamp: new Date().toISOString(),
                     });
@@ -163,7 +163,7 @@ exports.ChatGateway = ChatGateway = __decorate([
         },
     }),
     __metadata("design:paramtypes", [messages_service_1.MessagesService,
-        jwt_1.JwtService,
-        users_service_1.UsersService])
+    jwt_1.JwtService,
+    users_service_1.UsersService])
 ], ChatGateway);
 //# sourceMappingURL=chat.gateway.js.map

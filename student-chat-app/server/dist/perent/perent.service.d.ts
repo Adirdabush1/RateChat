@@ -11,5 +11,5 @@ export declare class ParentService {
         score: number;
         flaggedMessages: any[];
     } | null>;
-    handleNewMessage(sender: string, message: string, CHAT_ID: string, score: number): Promise<import("../messages/message.schema/message.schema").Message>;
+    handleNewMessage(sender: string, message: string, chatId: string, score: number): Promise<import("../messages/message.schema/message.schema").Message>;
 }

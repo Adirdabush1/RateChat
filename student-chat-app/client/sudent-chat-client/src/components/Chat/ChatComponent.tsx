@@ -4,17 +4,17 @@ import { connectSocket, disconnectSocket, getSocket } from '../utils/socket';
 import { getToken } from '../utils/token';
 
 type Props = {
-  CHAT_ID: string;
+  chatId: string;
 };
 
-const ChatComponent: React.FC<Props> = ({ CHAT_ID }) => {
+const ChatComponent: React.FC<Props> = ({ chatId }) => {
   const [messages, setMessages] = useState<{ sender: string; message: string }[]>([]);
 
   useEffect(() => {
     const token = getToken();
-    if (!token || !CHAT_ID) return;
+    if (!token || !chatId) return;
 
-    const socket = connectSocket(token, CHAT_ID);
+    const socket = connectSocket(token, chatId);
 
     socket.on('connect', () => {
       console.log('🔌 Socket connected');
@@ -37,7 +37,7 @@ const ChatComponent: React.FC<Props> = ({ CHAT_ID }) => {
     return () => {
       disconnectSocket();
     };
-  }, [CHAT_ID]);
+  }, [chatId]);
 
   const sendMessage = (text: string) => {
     const socket = getSocket();
@@ -55,7 +55,7 @@ const ChatComponent: React.FC<Props> = ({ CHAT_ID }) => {
 
   return (
     <div>
-      <h2>Chat Room: {CHAT_ID}</h2>
+      <h2>Chat Room: {chatId}</h2>
       <div style={{ border: '1px solid gray', height: '300px', overflowY: 'scroll', padding: '10px' }}>
         {messages.map((msg, i) => (
           <div key={i}>

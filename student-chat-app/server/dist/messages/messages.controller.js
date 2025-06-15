@@ -20,17 +20,17 @@ let MessagesController = class MessagesController {
     constructor(messagesService) {
         this.messagesService = messagesService;
     }
-    async getMessages(CHAT_ID) {
-        return this.messagesService.getMessagesByChat(CHAT_ID);
+    async getMessages(chatId) {
+        return this.messagesService.getMessagesByChat(chatId);
     }
     async createMessage(body) {
-        return this.messagesService.saveMessage(body.sender, body.message, body.CHAT_ID, 0);
+        return this.messagesService.saveMessage(body.sender, body.message, body.chatId, 0);
     }
 };
 exports.MessagesController = MessagesController;
 __decorate([
-    (0, common_1.Get)(':CHAT_ID'),
-    __param(0, (0, common_1.Param)('CHAT_ID')),
+    (0, common_1.Get)(':chatId'),
+    __param(0, (0, common_1.Param)('chatId')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)

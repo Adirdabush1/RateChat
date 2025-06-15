@@ -13,10 +13,10 @@ type ChatMessage = {
 
 type ChatComponentProps = {
   token: string;
-  CHAT_ID: string;
+  chatId: string;
 };
 
-const ChatComponent: React.FC<ChatComponentProps> = ({ token, CHAT_ID }) => {
+const ChatComponent: React.FC<ChatComponentProps> = ({ token, chatId }) => {
   const [message, setMessage] = useState('');
   const [username, setUsername] = useState('');
   const [chat, setChat] = useState<ChatMessage[]>([]);
@@ -37,14 +37,14 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ token, CHAT_ID }) => {
     setUsername(user.name);
 
     socketRef.current = io('https://ratechat-1.onrender.com', {
-      auth: { token, CHAT_ID },
+      auth: { token, chatId },
     });
 
     socketRef.current.on('connect', () => {
       console.log('Connected to socket');
-      if (CHAT_ID) {
-        socketRef.current?.emit('join_room', CHAT_ID);
-        previousGroupRef.current = CHAT_ID;
+      if (chatId) {
+        socketRef.current?.emit('join_room', chatId);
+        previousGroupRef.current = chatId;
       } else {
         alert('Invalid group name');
         navigate('/');
@@ -54,8 +54,8 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ token, CHAT_ID }) => {
     socketRef.current.on('receive_message', (data: ChatMessage) => {
       setChat(prev => {
         const updatedChat = [...prev, data];
-        if (CHAT_ID) {
-          localStorage.setItem(`chatMessages_${CHAT_ID}`, JSON.stringify(updatedChat));
+        if (chatId) {
+          localStorage.setItem(`chatMessages_${chatId}`, JSON.stringify(updatedChat));
         }
         return updatedChat;
       });
@@ -67,15 +67,15 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ token, CHAT_ID }) => {
 
     socketRef.current.on('chat_history', (messages: ChatMessage[]) => {
       setChat(messages);
-      if (CHAT_ID) {
-        localStorage.setItem(`chatMessages_${CHAT_ID}`, JSON.stringify(messages));
+      if (chatId) {
+        localStorage.setItem(`chatMessages_${chatId}`, JSON.stringify(messages));
       }
     });
 
     socketRef.current.on('clear_chat', () => {
       setChat([]);
-      if (CHAT_ID) {
-        localStorage.removeItem(`chatMessages_${CHAT_ID}`);
+      if (chatId) {
+        localStorage.removeItem(`chatMessages_${chatId}`);
       }
     });
 
@@ -83,24 +83,24 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ token, CHAT_ID }) => {
       socketRef.current?.disconnect();
       socketRef.current = null;
     };
-  }, [navigate, token, CHAT_ID]);
+  }, [navigate, token, chatId]);
 
   useEffect(() => {
-    if (!CHAT_ID) return;
+    if (!chatId) return;
 
-    const storageKey = `chatMessages_${CHAT_ID}`;
+    const storageKey = `chatMessages_${chatId}`;
     const savedMessages = JSON.parse(localStorage.getItem(storageKey) || '[]');
     setChat(savedMessages);
 
     if (socketRef.current) {
-      if (previousGroupRef.current && previousGroupRef.current !== CHAT_ID) {
+      if (previousGroupRef.current && previousGroupRef.current !== chatId) {
         socketRef.current.emit('leave_room', previousGroupRef.current);
       }
-      socketRef.current.emit('join_room', CHAT_ID);
+      socketRef.current.emit('join_room', chatId);
     }
 
-    previousGroupRef.current = CHAT_ID;
-  }, [CHAT_ID]);
+    previousGroupRef.current = chatId;
+  }, [chatId]);
 
   useEffect(() => {
     if (chatBoxRef.current) {
@@ -109,10 +109,10 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ token, CHAT_ID }) => {
   }, [chat]);
 
   const clearChat = () => {
-    if (!CHAT_ID) return;
-    localStorage.removeItem(`chatMessages_${CHAT_ID}`);
+    if (!chatId) return;
+    localStorage.removeItem(`chatMessages_${chatId}`);
     setChat([]);
-    socketRef.current?.emit('clear_room', CHAT_ID);
+    socketRef.current?.emit('clear_room', chatId);
   };
 
   const sendMessage = () => {
@@ -120,7 +120,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ token, CHAT_ID }) => {
     socketRef.current?.emit('send_message', {
       message,
       sender: username,
-      room: CHAT_ID,
+      room: chatId,
     });
     setMessage('');
   };
@@ -138,13 +138,13 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ token, CHAT_ID }) => {
       <aside className="sidebar">
         <h2 className="sidebar-title">🟢 Chat Group</h2>
 
-        <p className="group-name">Current: {CHAT_ID}</p>
+        <p className="group-name">Current: {chatId}</p>
 
         <div className="groups-list">
           {JSON.parse(localStorage.getItem('chatGroups') || '[]').map((group: string, idx: number) => (
             <button
               key={idx}
-              className={`group-link ${group === CHAT_ID ? 'active' : ''}`}
+              className={`group-link ${group === chatId ? 'active' : ''}`}
               onClick={() => navigate(`/chat/${group}`)}
             >
               {group}
@@ -207,7 +207,7 @@ const ChatWindow: React.FC = () => {
     return <div>Loading...</div>;
   }
 
-  return <ChatComponent token={token} CHAT_ID={groupName} />;
+  return <ChatComponent token={token} chatId={groupName} />;
 };
 
 export default ChatWindow;

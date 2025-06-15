@@ -4,7 +4,7 @@ export declare class Message {
     sender: string;
     text: string;
     message: string;
-    CHAT_ID: string;
+    chatId: string;
     createdAt: Date;
     score: number;
     mood: string;

@@ -26,21 +26,21 @@ let MessagesService = class MessagesService {
         const createdMessage = new this.messageModel(messageDto);
         return createdMessage.save();
     }
-    async saveMessage(sender, message, CHAT_ID, score) {
+    async saveMessage(sender, message, chatId, score) {
         const messageObj = {
             sender,
             message,
-            CHAT_ID,
+            chatId,
             score,
             timestamp: new Date(),
         };
         return this.create(messageObj);
     }
-    async getMessagesByChat(CHAT_ID) {
-        return this.messageModel.find({ CHAT_ID }).exec();
+    async getMessagesByChat(chatId) {
+        return this.messageModel.find({ chatId }).exec();
     }
-    async getFlaggedMessages(CHAT_ID) {
-        return this.messageModel.find({ CHAT_ID, score: { $lt: 50 } }).exec();
+    async getFlaggedMessages(chatId) {
+        return this.messageModel.find({ chatId, score: { $lt: 50 } }).exec();
     }
     async getFlaggedMessagesByStudentEmail(studentEmail) {
         return this.messageModel.find({ sender: studentEmail, flagged: true }).exec();

@@ -47,26 +47,26 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   async handleConnection(client: Socket) {
     try {
       const token = client.handshake.auth.token;
-      const CHAT_ID = client.handshake.auth.CHAT_ID as string;
+      const chatId = client.handshake.auth.chatId as string;
 
       this.logger.log(`handleConnection - received token: ${token}`);
-      this.logger.log(`handleConnection - received CHAT_ID: ${CHAT_ID}`);
+      this.logger.log(`handleConnection - received chatId: ${chatId}`);
 
       const payload = this.jwtService.verify(token);
 
       client.data.user = payload;
-      client.data.CHAT_ID = CHAT_ID;
+      client.data.chatId = chatId;
 
-      client.join(CHAT_ID);
+      client.join(chatId);
 
-      this.logger.log(`Client connected: ${payload.email} to chat ${CHAT_ID}`);
+      this.logger.log(`Client connected: ${payload.email} to chat ${chatId}`);
 
-      const history = await this.messagesService.getMessagesByChat(CHAT_ID);
+      const history = await this.messagesService.getMessagesByChat(chatId);
       client.emit('chat_history', history);
 
-      this.server.to(CHAT_ID).emit('receive_message', {
+      this.server.to(chatId).emit('receive_message', {
         sender: 'System',
-        message: `${payload.email} joined chat ${CHAT_ID}`,
+        message: `${payload.email} joined chat ${chatId}`,
       });
     } catch (err: any) {
       this.logger.error('Invalid token', err.message);
@@ -76,18 +76,18 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
   handleDisconnect(client: Socket) {
     const email = client.data.user?.email || client.id;
-    const CHAT_ID = client.data.CHAT_ID || 'unknown chat';
-    this.logger.log(`Client disconnected: ${email} from chat ${CHAT_ID}`);
+    const chatId = client.data.chatId || 'unknown chat';
+    this.logger.log(`Client disconnected: ${email} from chat ${chatId}`);
 
     if (this.parentSockets.has(email)) {
       this.parentSockets.delete(email);
       this.logger.log(`Removed parent socket for ${email}`);
     }
 
-    this.server.to(CHAT_ID).emit('receive_message', {
+    this.server.to(chatId).emit('receive_message', {
       sender: 'System',
       message: `${email} disconnected from chat`,
-      CHAT_ID,
+      chatId,
     });
   }
 
@@ -106,10 +106,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     @ConnectedSocket() client: Socket,
   ) {
     const user = client.data.user;
-    const CHAT_ID = client.data.CHAT_ID;
+    const chatId = client.data.chatId;
 
-    if (!user || !CHAT_ID) {
-      this.logger.warn('Unauthorized user or missing CHAT_ID tried to send message');
+    if (!user || !chatId) {
+      this.logger.warn('Unauthorized user or missing chatId tried to send message');
       return;
     }
 
@@ -129,15 +129,15 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       const saved = await this.messagesService.saveMessage(
         user.email,
         data.message,
-        CHAT_ID,
+        chatId,
         score,
       );
 
-      this.server.to(CHAT_ID).emit('receive_message', {
+      this.server.to(chatId).emit('receive_message', {
         sender: saved.sender,
         message: saved.message,
         score,
-        CHAT_ID,
+        chatId,
       });
 
       if (analysis.alertParent) {
@@ -147,7 +147,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
           await axios.post('https://your-api-url.com/alert', {
             studentEmail: user.email,
             message: data.message,
-            chatId: CHAT_ID,
+            chatId: chatId,
             reason: analysis.reason,
             timestamp: new Date().toISOString(),
           });

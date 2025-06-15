@@ -38,8 +38,8 @@ let ParentService = class ParentService {
             flaggedMessages,
         };
     }
-    async handleNewMessage(sender, message, CHAT_ID, score) {
-        const savedMessage = await this.messagesService.saveMessage(sender, message, CHAT_ID, score);
+    async handleNewMessage(sender, message, chatId, score) {
+        const savedMessage = await this.messagesService.saveMessage(sender, message, chatId, score);
         if (score < 50) {
             const student = await this.usersService.findByEmail(sender);
             if (student) {
@@ -57,7 +57,7 @@ exports.ParentService = ParentService;
 exports.ParentService = ParentService = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [users_service_1.UsersService,
-        messages_service_1.MessagesService,
-        mailer_service_1.MailerService])
+    messages_service_1.MessagesService,
+    mailer_service_1.MailerService])
 ], ParentService);
 //# sourceMappingURL=perent.service.js.map

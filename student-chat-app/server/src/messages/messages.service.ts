@@ -14,23 +14,23 @@ export class MessagesService {
     return createdMessage.save();
   }
 
-  async saveMessage(sender: string, message: string, CHAT_ID: string, score: number) {
+  async saveMessage(sender: string, message: string, chatId: string, score: number) {
     const messageObj = {
       sender,
       message,
-      CHAT_ID,
+      chatId,
       score,
       timestamp: new Date(),
     };
     return this.create(messageObj);
   }
 
-  async getMessagesByChat(CHAT_ID: string): Promise<Message[]> {
-    return this.messageModel.find({ CHAT_ID }).exec();
+  async getMessagesByChat(chatId: string): Promise<Message[]> {
+    return this.messageModel.find({ chatId }).exec();
   }
 
-  async getFlaggedMessages(CHAT_ID: string): Promise<Message[]> {
-  return this.messageModel.find({ CHAT_ID, score: { $lt: 50 } }).exec();
+  async getFlaggedMessages(chatId: string): Promise<Message[]> {
+  return this.messageModel.find({ chatId, score: { $lt: 50 } }).exec();
 }
 async getFlaggedMessagesByStudentEmail(studentEmail: string): Promise<Message[]> {
   return this.messageModel.find({ sender: studentEmail, flagged: true }).exec();
