@@ -5,7 +5,6 @@ let socket: Socket | null = null;
 export const connectSocket = (token: string, CHAT_ID: string) => {
     console.log('Connecting socket with:', { token, CHAT_ID });
   socket = io('https://ratechat-1.onrender.com', {
-      transports: ['websocket'], 
     auth: {
       token,
     CHAT_ID,  
