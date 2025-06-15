@@ -28,7 +28,8 @@ export class ParentService {
       await this.mailerService.sendAlertEmail(
         student.parentEmail,
         student.email,
-        flaggedMessages.map(msg => msg.text)
+       flaggedMessages.map(msg => msg.message)
+
       );
     }
 

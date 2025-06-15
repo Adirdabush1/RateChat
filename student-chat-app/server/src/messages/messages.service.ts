@@ -14,13 +14,20 @@ export class MessagesService {
     return createdMessage.save();
   }
 
-  async saveMessage(sender: string, message: string, chatId: string, score: number) {
+  async saveMessage(
+    sender: string,
+    message: string,
+    chatId: string,
+    score: number,
+    flagged: boolean = false,
+  ): Promise<Message> {
     const messageObj = {
       sender,
       message,
       chatId,
       score,
-      timestamp: new Date(),
+      flagged,
+      createdAt: new Date(),
     };
     return this.create(messageObj);
   }
@@ -30,11 +37,10 @@ export class MessagesService {
   }
 
   async getFlaggedMessages(chatId: string): Promise<Message[]> {
-  return this.messageModel.find({ chatId, score: { $lt: 50 } }).exec();
-}
-async getFlaggedMessagesByStudentEmail(studentEmail: string): Promise<Message[]> {
-  return this.messageModel.find({ sender: studentEmail, flagged: true }).exec();
-}
+    return this.messageModel.find({ chatId, flagged: true }).exec();
+  }
 
-
+  async getFlaggedMessagesByStudentEmail(studentEmail: string): Promise<Message[]> {
+    return this.messageModel.find({ sender: studentEmail, flagged: true }).exec();
+  }
 }

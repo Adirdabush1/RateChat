@@ -20,12 +20,10 @@ import { UsersService } from './users/users.service';
 
 @WebSocketGateway({
   cors: {
-    origin: 
-      'https://ratechat2.onrender.com',
+    origin: 'https://ratechat2.onrender.com',
     methods: ['GET', 'POST'], 
   },
 })
-
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, OnModuleInit {
   @WebSocketServer()
   server: Server;
@@ -119,24 +117,29 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       if (analysis.toxic) {
         this.logger.warn('Toxic message detected:', analysis.reason);
         if (analysis.alertParent) {
-          
+          // אפשר להוסיף טיפול נוסף במידת הצורך
         }
       }
 
       const score = typeof analysis.score === 'number' ? analysis.score : 0;
       const scoreChange = typeof analysis.scoreChange === 'number' ? analysis.scoreChange : 0;
 
+      // דגל הודעה מסוכנת אם הציון נמוך מ-50
+      const flagged = score < 50;
+
       const saved = await this.messagesService.saveMessage(
         user.email,
         data.message,
         chatId,
         score,
+        flagged,
       );
 
       this.server.to(chatId).emit('receive_message', {
         sender: saved.sender,
         message: saved.message,
         score,
+        flagged,
         chatId,
       });
 
