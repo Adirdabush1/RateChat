@@ -1,4 +1,4 @@
-const API_URL = 'https://ratechat-f72a4557d4ab.herokuapp.com'; 
+const API_URL = 'https://ratechat-front-d89b15939b57.herokuapp.com/'; 
 
 
 export const registerParent = async (data: {
