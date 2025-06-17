@@ -51,7 +51,7 @@ let ChatGateway = class ChatGateway {
             client.emit('chat_history', history);
             this.server.to(chatId).emit('receive_message', {
                 sender: 'System',
-                message: `${payload.email} joined chat ${chatId}`,
+                message: `wallcome to  ${chatId}`,
             });
         }
         catch (err) {

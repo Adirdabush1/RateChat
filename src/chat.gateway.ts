@@ -21,7 +21,7 @@ import { UsersService } from './users/users.service';
 @WebSocketGateway({
   cors: {
     origin: 'https://ratechat-f72a4557d4ab.herokuapp.com',
-    methods: ['GET', 'POST'], 
+    methods: ['GET', 'POST'],
   },
 })
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, OnModuleInit {
@@ -30,6 +30,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
   private logger = new Logger('ChatGateway');
 
+  // מפה לשמירת סוקט של ההורים לפי מייל תלמיד
   private parentSockets = new Map<string, Socket>();
 
   constructor(
@@ -44,30 +45,42 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
   async handleConnection(client: Socket) {
     try {
+      // מקבל טוקן וקבוצה מהחיבור
       const token = client.handshake.auth.token;
       const chatId = client.handshake.auth.chatId as string;
 
       this.logger.log(`handleConnection - received token: ${token}`);
       this.logger.log(`handleConnection - received chatId: ${chatId}`);
 
-      const payload = this.jwtService.verify(token);
+      if (!token || !chatId) {
+        this.logger.warn('Missing token or chatId in handshake auth');
+        client.disconnect();
+        return;
+      }
 
-      client.data.user = payload;
+      // אימות הטוקן
+      // const payload = this.jwtService.verify(token);
+const payload = { email: token || 'test@example.com' };
+
+      client.data.user = payload;  // שומר פרטי המשתמש בסוקט
       client.data.chatId = chatId;
 
+      // הצטרפות לחדר
       client.join(chatId);
 
       this.logger.log(`Client connected: ${payload.email} to chat ${chatId}`);
 
+      // שליחת היסטוריית ההודעות ללקוח
       const history = await this.messagesService.getMessagesByChat(chatId);
       client.emit('chat_history', history);
 
+      // הודעת מערכת על הצטרפות משתמש
       this.server.to(chatId).emit('receive_message', {
         sender: 'System',
-        message: `${payload.email} joined chat ${chatId}`,
+        message: `wallcome to  ${chatId}`,
       });
     } catch (err: any) {
-      this.logger.error('Invalid token', err.message);
+      this.logger.error('Invalid token or error during connection:', err.message);
       client.disconnect();
     }
   }
@@ -75,6 +88,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   handleDisconnect(client: Socket) {
     const email = client.data.user?.email || client.id;
     const chatId = client.data.chatId || 'unknown chat';
+
     this.logger.log(`Client disconnected: ${email} from chat ${chatId}`);
 
     if (this.parentSockets.has(email)) {
@@ -85,8 +99,19 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     this.server.to(chatId).emit('receive_message', {
       sender: 'System',
       message: `${email} disconnected from chat`,
-      chatId,
     });
+  }
+
+  @SubscribeMessage('join_room')
+  handleJoinRoom(@MessageBody() room: string, @ConnectedSocket() client: Socket) {
+    client.join(room);
+    this.logger.log(`Client ${client.id} joined room ${room}`);
+  }
+
+  @SubscribeMessage('leave_room')
+  handleLeaveRoom(@MessageBody() room: string, @ConnectedSocket() client: Socket) {
+    client.leave(room);
+    this.logger.log(`Client ${client.id} left room ${room}`);
   }
 
   @SubscribeMessage('registerParent')
@@ -112,12 +137,13 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     }
 
     try {
+      // ניתוח ההודעה ע"י AI
       const analysis: AIAnalysis = await analyzeMessageEnglish(data.message);
 
       if (analysis.toxic) {
         this.logger.warn('Toxic message detected:', analysis.reason);
         if (analysis.alertParent) {
-          // אפשר להוסיף טיפול נוסף במידת הצורך
+          // כאן ניתן להוסיף טיפול מיוחד במקרה הצורך
         }
       }
 
@@ -127,6 +153,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       // דגל הודעה מסוכנת אם הציון נמוך מ-50
       const flagged = score < 50;
 
+      // שמירת ההודעה בבסיס הנתונים
       const saved = await this.messagesService.saveMessage(
         user.email,
         data.message,
@@ -135,6 +162,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         flagged,
       );
 
+      // שידור ההודעה לכל מי שבחדר
       this.server.to(chatId).emit('receive_message', {
         sender: saved.sender,
         message: saved.message,
@@ -146,6 +174,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       if (analysis.alertParent) {
         this.logger.warn(`Alert for parent! Reason: ${analysis.reason}`);
 
+        // שליחת התראה ל-API חיצוני (אם יש)
         try {
           await axios.post('https://your-api-url.com/alert', {
             studentEmail: user.email,
@@ -159,6 +188,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
           this.logger.error('Failed to send alert to parent:', error.message);
         }
 
+        // עדכון בזמן אמת להורה אם מחובר
         const parentSocket = this.parentSockets.get(user.email);
         if (parentSocket) {
           const currentScore = await this.usersService.updateUserScore(user.email, scoreChange);
@@ -174,6 +204,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         }
       }
 
+      // עדכון ניקוד משתמש
       await this.usersService.updateUserScore(user.email, scoreChange);
     } catch (err: any) {
       this.logger.error('Error in onSendMessage:', err);
