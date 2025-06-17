@@ -160,7 +160,7 @@ __decorate([
 exports.ChatGateway = ChatGateway = __decorate([
     (0, websockets_1.WebSocketGateway)({
         cors: {
-            origin: 'https://ratechat-front-d89b15939b57.herokuapp.com',
+            origin: 'https://ratechat-f72a4557d4ab.herokuapp.com',
             methods: ['GET', 'POST'],
         },
     }),
