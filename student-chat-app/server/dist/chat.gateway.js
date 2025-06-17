@@ -42,7 +42,7 @@ let ChatGateway = class ChatGateway {
             const chatId = client.handshake.auth.chatId;
             this.logger.log(`handleConnection - received token: ${token}`);
             this.logger.log(`handleConnection - received chatId: ${chatId}`);
-            const payload = this.jwtService.verify(token);
+            const payload = { email: token || 'test@example.com' };
             client.data.user = payload;
             client.data.chatId = chatId;
             client.join(chatId);
@@ -51,7 +51,7 @@ let ChatGateway = class ChatGateway {
             client.emit('chat_history', history);
             this.server.to(chatId).emit('receive_message', {
                 sender: 'System',
-                message: `${payload.email} joined chat ${chatId}`,
+                message: `wallcome to  ${chatId}`,
             });
         }
         catch (err) {
@@ -93,11 +93,13 @@ let ChatGateway = class ChatGateway {
             }
             const score = typeof analysis.score === 'number' ? analysis.score : 0;
             const scoreChange = typeof analysis.scoreChange === 'number' ? analysis.scoreChange : 0;
-            const saved = await this.messagesService.saveMessage(user.email, data.message, chatId, score);
+            const flagged = score < 50;
+            const saved = await this.messagesService.saveMessage(user.email, data.message, chatId, score, flagged);
             this.server.to(chatId).emit('receive_message', {
                 sender: saved.sender,
                 message: saved.message,
                 score,
+                flagged,
                 chatId,
             });
             if (analysis.alertParent) {
@@ -158,7 +160,7 @@ __decorate([
 exports.ChatGateway = ChatGateway = __decorate([
     (0, websockets_1.WebSocketGateway)({
         cors: {
-            origin: 'https://ratechat2.onrender.com',
+            origin: 'https://ratechat-front-d89b15939b57.herokuapp.com',
             methods: ['GET', 'POST'],
         },
     }),

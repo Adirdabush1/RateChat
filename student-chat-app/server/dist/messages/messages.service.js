@@ -26,13 +26,14 @@ let MessagesService = class MessagesService {
         const createdMessage = new this.messageModel(messageDto);
         return createdMessage.save();
     }
-    async saveMessage(sender, message, chatId, score) {
+    async saveMessage(sender, message, chatId, score, flagged = false) {
         const messageObj = {
             sender,
             message,
             chatId,
             score,
-            timestamp: new Date(),
+            flagged,
+            createdAt: new Date(),
         };
         return this.create(messageObj);
     }
@@ -40,7 +41,7 @@ let MessagesService = class MessagesService {
         return this.messageModel.find({ chatId }).exec();
     }
     async getFlaggedMessages(chatId) {
-        return this.messageModel.find({ chatId, score: { $lt: 50 } }).exec();
+        return this.messageModel.find({ chatId, flagged: true }).exec();
     }
     async getFlaggedMessagesByStudentEmail(studentEmail) {
         return this.messageModel.find({ sender: studentEmail, flagged: true }).exec();

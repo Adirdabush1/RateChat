@@ -6,8 +6,8 @@ class MailerService {
     transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
-            user: 'your_email@gmail.com',
-            pass: 'your_app_password'
+            user: 'adiraws2025@gmail.com',
+            pass: 'iejp ogqq qvhb odpl'
         }
     });
     async sendAlertEmail(to, studentName, flaggedMessages) {

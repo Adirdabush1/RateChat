@@ -8,20 +8,14 @@ async function bootstrap() {
   const allowedOrigins = [
     'https://ratechat-f72a4557d4ab.herokuapp.com',
     'https://ratechat-front.herokuapp.com',
-    'http://localhost:3000', // אופציונלי לפיתוח מקומי
+    'http://localhost:3000', 
   ];
 
   app.enableCors({
-    origin: (origin, callback) => {
-      if (!origin) return callback(null, true);
-      if (allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
-    credentials: true,
-  });
+  origin: 'https://ratechat-front-d89b15939b57.herokuapp.com', 
+  credentials: true,
+});
+
 
   app.useWebSocketAdapter(new IoAdapter(app));
 

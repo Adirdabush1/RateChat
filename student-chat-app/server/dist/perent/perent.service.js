@@ -30,7 +30,7 @@ let ParentService = class ParentService {
         }
         const flaggedMessages = await this.messagesService.getFlaggedMessagesByStudentEmail(studentEmail);
         if (flaggedMessages.length > 0 && student.parentEmail) {
-            await this.mailerService.sendAlertEmail(student.parentEmail, student.email, flaggedMessages.map(msg => msg.text));
+            await this.mailerService.sendAlertEmail(student.parentEmail, student.email, flaggedMessages.map(msg => msg.message));
         }
         return {
             name: student.email,
@@ -57,7 +57,7 @@ exports.ParentService = ParentService;
 exports.ParentService = ParentService = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [users_service_1.UsersService,
-    messages_service_1.MessagesService,
-    mailer_service_1.MailerService])
+        messages_service_1.MessagesService,
+        mailer_service_1.MailerService])
 ], ParentService);
 //# sourceMappingURL=perent.service.js.map

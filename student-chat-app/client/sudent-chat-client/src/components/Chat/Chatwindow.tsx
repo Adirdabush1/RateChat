@@ -8,7 +8,7 @@ type ChatMessage = {
   message: string;
   sender: string;
   score?: number;
-  alertParent?: boolean;
+ flagged?: boolean;
 };
 
 type ChatComponentProps = {
@@ -60,7 +60,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ token, chatId }) => {
         return updatedChat;
       });
 
-      if (data.alertParent) {
+      if (data.flagged) {
         alert("⚠️ A message was sent to a parent due to harmful content!");
       }
     });
@@ -117,11 +117,10 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ token, chatId }) => {
 
   const sendMessage = () => {
     if (message.trim() === '') return;
-    socketRef.current?.emit('send_message', {
-      message,
-      sender: username,
-      room: chatId,
-    });
+   socketRef.current?.emit('send_message', {
+  message,
+});
+
     setMessage('');
   };
 
@@ -137,7 +136,9 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ token, chatId }) => {
     <div className="chat-window">
       <aside className="sidebar">
         <h2 className="sidebar-title">🟢 Chat Group</h2>
-
+ {
+  
+}
         <p className="group-name">Current: {chatId}</p>
 
         <div className="groups-list">

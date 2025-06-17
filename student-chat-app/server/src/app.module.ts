@@ -1,5 +1,5 @@
 import { Module, Injectable, OnModuleInit } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule, InjectConnection } from '@nestjs/mongoose';
 import { Connection } from 'mongoose';
 import { join } from 'path';
@@ -30,15 +30,25 @@ export class MongoConnectionService implements OnModuleInit {
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: join(__dirname, '..', '.env'), 
+      // לא כופה envFilePath, כך שברנדור משתמש במשתני סביבה
+      // אם תרצה להוסיף קובץ env במקומי תוסיף envFilePath פה
     }),
-    MongooseModule.forRoot(process.env.MONGODB_URI!),
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        uri: configService.get<string>('MONGODB_URI'),
+        // אפשר להוסיף אופציות נוספות אם רוצים, לדוגמה:
+        // useNewUrlParser: true,
+        // useUnifiedTopology: true,
+      }),
+    }),
     AuthModule,
     UsersModule,
     MessagesModule,
     ParentModule,
-    ChatModule,  
+    ChatModule,
   ],
-  providers: [AlertsService, MongoConnectionService],  
+  providers: [AlertsService, MongoConnectionService],
 })
 export class AppModule {}

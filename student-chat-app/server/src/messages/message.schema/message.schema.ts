@@ -23,8 +23,9 @@ export class Message {
   @Prop()
   userId?: string;
 
-  @Prop()
-  flagged?: boolean; // במידה ואתה מסמן הודעות בעייתיות
+@Prop({ default: false })
+flagged?: boolean;
+
 }
 
 export const MessageSchema = SchemaFactory.createForClass(Message);

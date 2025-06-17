@@ -17,7 +17,6 @@ const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
-const path_1 = require("path");
 const messages_module_1 = require("./messages/messages.module");
 const auth_module_1 = require("./auth/auth.module");
 const users_module_1 = require("./users/users.module");
@@ -52,9 +51,14 @@ exports.AppModule = AppModule = __decorate([
         imports: [
             config_1.ConfigModule.forRoot({
                 isGlobal: true,
-                envFilePath: (0, path_1.join)(__dirname, '..', '.env'),
             }),
-            mongoose_1.MongooseModule.forRoot(process.env.MONGODB_URI),
+            mongoose_1.MongooseModule.forRootAsync({
+                imports: [config_1.ConfigModule],
+                inject: [config_1.ConfigService],
+                useFactory: (configService) => ({
+                    uri: configService.get('MONGODB_URI'),
+                }),
+            }),
             auth_module_1.AuthModule,
             users_module_1.UsersModule,
             messages_module_1.MessagesModule,

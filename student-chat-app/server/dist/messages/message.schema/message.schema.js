@@ -13,15 +13,12 @@ exports.MessageSchema = exports.Message = void 0;
 const mongoose_1 = require("@nestjs/mongoose");
 let Message = class Message {
     sender;
-    text;
     message;
     chatId;
-    createdAt;
     score;
     mood;
     userId;
-    content;
-    chatId;
+    flagged;
 };
 exports.Message = Message;
 __decorate([
@@ -37,29 +34,21 @@ __decorate([
     __metadata("design:type", String)
 ], Message.prototype, "chatId", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({ default: Date.now }),
-    __metadata("design:type", Date)
-], Message.prototype, "createdAt", void 0);
-__decorate([
-    (0, mongoose_1.Prop)({ required: false, default: 0 }),
+    (0, mongoose_1.Prop)({ default: 0 }),
     __metadata("design:type", Number)
 ], Message.prototype, "score", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({ required: false }),
+    (0, mongoose_1.Prop)(),
     __metadata("design:type", String)
 ], Message.prototype, "mood", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({ required: false }),
+    (0, mongoose_1.Prop)(),
     __metadata("design:type", String)
 ], Message.prototype, "userId", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({ required: false }),
-    __metadata("design:type", String)
-], Message.prototype, "content", void 0);
-__decorate([
-    (0, mongoose_1.Prop)({ required: false }),
-    __metadata("design:type", String)
-], Message.prototype, "chatId", void 0);
+    (0, mongoose_1.Prop)({ default: false }),
+    __metadata("design:type", Boolean)
+], Message.prototype, "flagged", void 0);
 exports.Message = Message = __decorate([
     (0, mongoose_1.Schema)({ timestamps: true })
 ], Message);
