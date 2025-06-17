@@ -11,13 +11,11 @@ import {
   IonLabel,
   IonInput,
   IonButton,
-  IonText,
-  IonToast,
+  IonFooter,
   IonButtons,
   IonBackButton,
 } from '@ionic/react';
-import { IonFooter } from '@ionic/react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom'; // <-- useHistory במקום useNavigate
 import { io, Socket } from 'socket.io-client';
 import { getToken, getUser } from '../utils/token';
 
@@ -30,13 +28,12 @@ type ChatMessage = {
 
 const ChatWindow: React.FC = () => {
   const { groupName } = useParams<{ groupName: string }>();
-  const navigate = useNavigate();
+  const history = useHistory(); // <-- useHistory
   const token = getToken();
 
   const [chat, setChat] = useState<ChatMessage[]>([]);
   const [message, setMessage] = useState('');
   const [username, setUsername] = useState('');
-  const [toastMsg, setToastMsg] = useState('');
   const socketRef = useRef<Socket | null>(null);
   const contentRef = useRef<HTMLIonContentElement>(null);
   const previousGroupRef = useRef<string | null>(null);
@@ -44,13 +41,13 @@ const ChatWindow: React.FC = () => {
   useEffect(() => {
     if (!token) {
       alert('You must log in');
-      navigate('/login');
+      history.push('/login'); // <-- כאן
       return;
     }
     if (!groupName) {
-      navigate('/');
+      history.push('/'); // <-- וגם כאן
     }
-  }, [token, groupName, navigate]);
+  }, [token, groupName, history]);
 
   useEffect(() => {
     const user = getUser();
@@ -130,11 +127,15 @@ const ChatWindow: React.FC = () => {
 
   const handleLogout = () => {
     localStorage.clear();
-    navigate('/login');
+    history.push('/login'); // <-- גם כאן
   };
 
   if (!groupName || !token) {
-    return <IonPage><IonContent>Loading...</IonContent></IonPage>;
+    return (
+      <IonPage>
+        <IonContent>Loading...</IonContent>
+      </IonPage>
+    );
   }
 
   return (

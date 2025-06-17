@@ -4,7 +4,7 @@ import {
   setupIonicReact
 } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Switch, Route, Redirect } from 'react-router-dom';
 
 import Home from './components/pages/Home';
 import ChatLobby from './components/Chat/ChatLobby';
@@ -34,17 +34,17 @@ const App: React.FC = () => (
   <IonApp>
     <IonReactRouter>
       <IonRouterOutlet>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/lobby" element={<ChatLobby />} />
-          <Route path="/chat/:groupName" element={<ChatWindow />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register-parent" element={<RegisterParent />} />
-          <Route path="/login-parent" element={<LoginParent />} />
-          <Route path="/parent-dashboard" element={<ParentDashboard />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
+        <Switch>
+          <Route exact path="/" component={Home} />
+          <Route path="/lobby" component={ChatLobby} />
+          <Route path="/chat/:groupName" component={ChatWindow} />
+          <Route path="/register" component={RegisterPage} />
+          <Route path="/login" component={LoginPage} />
+          <Route path="/register-parent" component={RegisterParent} />
+          <Route path="/login-parent" component={LoginParent} />
+          <Route path="/parent-dashboard" component={ParentDashboard} />
+          <Redirect to="/" />
+        </Switch>
       </IonRouterOutlet>
     </IonReactRouter>
   </IonApp>

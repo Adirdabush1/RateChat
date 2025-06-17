@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { loginUser } from '../services/authService';
-import { useNavigate } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';  // לא useNavigate!
 
 import {
   IonPage,
@@ -16,7 +16,7 @@ export default function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
-  const navigate = useNavigate();
+  const history = useHistory();  // זה מה שיש בגרסה 5
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,7 +25,7 @@ export default function LoginForm() {
       localStorage.setItem('token', result.access_token);
       localStorage.setItem('user', JSON.stringify({ name: result.name, email }));
       setMessage('Logged in successfully!');
-      navigate('/lobby');
+      history.push('/lobby');  // זה השדרוג שלך ל-navigate בגרסה 5
     } catch (error: any) {
       setMessage(error.response?.data?.message || 'Login error');
     }

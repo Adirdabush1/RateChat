@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { registerUser } from '../services/authService';
-import { useNavigate } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';  // לא useNavigate!
 
 import {
   IonPage,
@@ -16,7 +16,7 @@ export default function RegisterForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
-  const navigate = useNavigate();
+  const history = useHistory();  // זה הסוד
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,7 +24,7 @@ export default function RegisterForm() {
       const result = await registerUser(email, password);
       setMessage('Registered successfully!');
       console.log(result);
-      navigate('/lobby');
+      history.push('/lobby');  // במקום navigate
     } catch (error: any) {
       setMessage(error.response?.data?.message || 'Registration error');
     }

@@ -7,11 +7,11 @@ import {
   IonCol,
   IonText,
 } from '@ionic/react';
-import { useNavigate } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import './styles/Home.css';
 
 const Home: React.FC = () => {
-  const navigate = useNavigate();
+  const history = useHistory();
 
   return (
     <IonPage>
@@ -32,28 +32,22 @@ const Home: React.FC = () => {
           <IonGrid className="button-group">
             <IonRow>
               <IonCol size="12" className="ion-padding-vertical">
-                <IonButton expand="block" onClick={() => navigate('/login')}>
+                <IonButton expand="block" onClick={() => history.push('/login')}>
                   Student Login
                 </IonButton>
               </IonCol>
               <IonCol size="12" className="ion-padding-vertical">
-                <IonButton expand="block" onClick={() => navigate('/register')}>
+                <IonButton expand="block" onClick={() => history.push('/register')}>
                   Student Register
                 </IonButton>
               </IonCol>
               <IonCol size="12" className="ion-padding-vertical">
-                <IonButton
-                  expand="block"
-                  onClick={() => navigate('/login-parent')}
-                >
+                <IonButton expand="block" onClick={() => history.push('/login-parent')}>
                   Parent Login
                 </IonButton>
               </IonCol>
               <IonCol size="12" className="ion-padding-vertical">
-                <IonButton
-                  expand="block"
-                  onClick={() => navigate('/register-parent')}
-                >
+                <IonButton expand="block" onClick={() => history.push('/register-parent')}>
                   Parent Register
                 </IonButton>
               </IonCol>

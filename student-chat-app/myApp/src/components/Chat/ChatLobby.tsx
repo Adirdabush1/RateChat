@@ -1,82 +1,75 @@
 // src/pages/ChatLobby.tsx
-import React, { useEffect, useState } from 'react';
-import {
-  IonPage,
-  IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonContent,
-  IonInput,
-  IonButton,
-  IonList,
-  IonItem,
-  IonLabel,
-} from '@ionic/react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import { getToken } from '../utils/token';
+import "../pages/styles/chatLobby.css";
 
-const ChatLobby: React.FC = () => {
+export default function ChatLobby() {
   const [groups, setGroups] = useState<string[]>([]);
   const [newGroup, setNewGroup] = useState('');
-  const navigate = useNavigate();
+  const history = useHistory();
 
   useEffect(() => {
     const token = getToken();
     if (!token) {
       alert('You must log in first');
-      navigate('/login');
+      history.push('/login');
       return;
     }
 
     try {
       const savedGroups = JSON.parse(localStorage.getItem('chatGroups') || '[]');
-      if (Array.isArray(savedGroups)) setGroups(savedGroups.filter(g => typeof g === 'string'));
-      else setGroups([]);
-    } catch {
+      const validGroups = Array.isArray(savedGroups)
+        ? savedGroups.filter(group => typeof group === 'string')
+        : [];
+      setGroups(validGroups);
+    } catch (err) {
+      console.error('Error reading chatGroups from localStorage', err);
       setGroups([]);
     }
-  }, [navigate]);
+  }, [history]);
 
   const handleCreateGroup = () => {
     if (!newGroup.trim()) return;
 
-    const uniqueGroups = Array.from(new Set([...groups, newGroup.trim()]));
+    const cleanedName = newGroup.trim();
+    const updatedGroups = [...groups, cleanedName];
+    const uniqueGroups = Array.from(new Set(updatedGroups));
+
     setGroups(uniqueGroups);
     localStorage.setItem('chatGroups', JSON.stringify(uniqueGroups));
     setNewGroup('');
   };
 
   const enterGroup = (groupName: string) => {
-    navigate(`/chat/${groupName}`);
+    history.push(`/chat/${groupName}`);
   };
 
   return (
-    <IonPage>
-      <IonHeader>
-        <IonToolbar>
-          <IonTitle>👥 Welcome to the Chat</IonTitle>
-        </IonToolbar>
-      </IonHeader>
+    <div className="chat-lobby-page">
+      <div className="chat-lobby-container">
+        <h2>👥 Welcome to the Chat</h2>
+        <p>Select an existing group or create a new one:</p>
 
-      <IonContent fullscreen>
-        <IonInput
-          value={newGroup}
-          placeholder="New group name"
-          onIonChange={e => setNewGroup(e.detail.value!)}
-          clearInput
-        />
-        <IonButton expand="block" onClick={handleCreateGroup}>➕ Create Group</IonButton>
+        <div className="input-group">
+          <input
+            value={newGroup}
+            onChange={(e) => setNewGroup(e.target.value)}
+            placeholder="New group name"
+          />
+          <button onClick={handleCreateGroup}>➕ Create Group</button>
+        </div>
 
-        <IonList>
-          {groups.map((group, idx) => (
-            <IonItem key={idx} button onClick={() => enterGroup(group)}>
-              <IonLabel>🔹 {group}</IonLabel>
-            </IonItem>
-          ))}
-        </IonList>
-      </IonContent>
-    </IonPage>
+        <ul className="groups-list">
+          {groups.map((group, idx) =>
+            typeof group === 'string' ? (
+              <li key={idx}>
+                <button onClick={() => enterGroup(group)}>🔹 {group}</button>
+              </li>
+            ) : null
+          )}
+        </ul>
+      </div>
+    </div>
   );
-};
-
-export default ChatLobby;
+}

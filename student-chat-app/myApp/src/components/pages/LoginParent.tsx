@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import axios from 'axios';
 import './styles/Login.css';
 import { setToken } from '../utils/token';
@@ -10,7 +10,7 @@ interface LoginResponse {
 
 const LoginParent: React.FC = () => {
   const [formData, setFormData] = useState({ email: '', studentName: '' });
-  const navigate = useNavigate();
+  const history = useHistory();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -28,7 +28,7 @@ const LoginParent: React.FC = () => {
       localStorage.setItem('parentEmail', formData.email);
 
       alert('התחברת בהצלחה כהורה!');
-      navigate('/parent-dashboard');
+      history.push('/parent-dashboard');
     } catch (error) {
       console.error('Login error:', error);
       alert('שגיאה בהתחברות. ודא פרטים נכונים או נסה שוב מאוחר יותר.');

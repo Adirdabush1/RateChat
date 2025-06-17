@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { registerParent } from '../services/api';
 import { IonPage, IonContent } from '@ionic/react';
 import './styles/Login.css';
@@ -16,14 +16,14 @@ export default function RegisterParent() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const navigate = useNavigate();
+  const history = useHistory();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       await registerParent(formData);
       alert('Registration successful');
-      navigate('/parent-dashboard');
+      history.push('/parent-dashboard');
     } catch (err) {
       alert('Registration error');
       console.error(err);
