@@ -119,3 +119,15 @@ npm start
 ## 📄 **License**
 
 **RateChat is an open-source project under the MIT License.**
+
+images:
+
+![image](https://github.com/user-attachments/assets/98b696bf-50f3-4e3c-af27-a86fa8f56eca)
+
+![image](https://github.com/user-attachments/assets/60b5dd62-2281-4a36-bcda-ee28c98f5f8b)
+
+![image](https://github.com/user-attachments/assets/647668da-96ca-4618-b6d4-ef8ea250719e)
+
+![image](https://github.com/user-attachments/assets/1b479758-2efc-48de-982e-577f8002f523)
+
+
